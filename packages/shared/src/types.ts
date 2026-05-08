@@ -1,22 +1,50 @@
 export type EmissionCategory = "transportation" | "energy" | "diet" | "waste";
 
-export interface EmissionFactor {
+export interface Category {
+  id: EmissionCategory;
+  label: string;
+}
+
+export interface Activity {
+  id: string;
   category: EmissionCategory;
+  label: string;
+  inputUnit: string;
+  transformation: string;
+}
+
+export interface Transformation {
+  id: string;
+  label: string;
+  formula: string;
+}
+
+export interface EmissionFactor {
+  id: string;
+  activity: string;
+  value: number;
   unit: string;
-  kgCO2ePerUnit: number;
-  description: string;
+  region: string;
+  year: number;
+  source: string;
+  methodology: string;
 }
 
 export interface CalculationInput {
-  category: EmissionCategory;
+  activityId: string;
   quantity: number;
-  unit: string;
+  factorId?: string;
 }
 
 export interface CalculationResult {
-  category: EmissionCategory;
-  kgCO2e: number;
-  breakdown: Record<string, number>;
+  activity: string;
+  input: number;
+  inputUnit: string;
+  factor: string;
+  result: {
+    kgCO2e: number;
+    unit: "kg";
+  };
 }
 
 export interface FootprintSummary {

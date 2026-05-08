@@ -1,3 +1,6 @@
+# Turbo
+.turbo/
+
 # Logs
 logs
 *.log
@@ -141,3 +144,6 @@ dist
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 .vite/
+
+#Other
+Fullstack_Engineer_Take-home_Challenge_24_03_2026.pdf

@@ -1,3 +1,18 @@
+import { createTheme, CssBaseline, ThemeProvider } from "@mui/material";
+import { FootprintCalculator } from "./components/FootprintCalculator";
+
+const theme = createTheme({
+  palette: {
+    primary: { main: "#2e7d32" },
+    background: { default: "#f5f5f5" },
+  },
+});
+
 export default function App() {
-  return <div>Carbon Footprint Calculator</div>;
+  return (
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <FootprintCalculator />
+    </ThemeProvider>
+  );
 }

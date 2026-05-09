@@ -1,34 +1,31 @@
 import type { Activity } from "@sinai/shared";
-import type { InputRow } from "../types";
 import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
-  Button,
   Stack,
   Typography,
 } from "@mui/material";
-import AddIcon from "@mui/icons-material/Add";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import { ActivityRow } from "./ActivityRow";
+import { ActivityInput } from "./ActivityInput";
 
 interface CategorySectionProps {
   label: string;
   activities: Activity[];
-  rows: InputRow[];
-  onAddRow: () => void;
-  onRemoveRow: (rowId: string) => void;
-  onUpdateRow: (rowId: string, field: "activityId" | "quantity", value: string) => void;
+  quantities: Record<string, string>;
+  onQuantityChange: (activityId: string, quantity: string) => void;
 }
 
 export function CategorySection({
   label,
   activities,
-  rows,
-  onAddRow,
-  onRemoveRow,
-  onUpdateRow,
+  quantities,
+  onQuantityChange,
 }: CategorySectionProps) {
+  const filledCount = activities.filter(
+    (a) => quantities[a.id] && Number(quantities[a.id]) > 0
+  ).length;
+
   return (
     <Accordion disableGutters>
       <AccordionSummary expandIcon={<ExpandMoreIcon />}>
@@ -36,9 +33,9 @@ export function CategorySection({
           <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
             {label}
           </Typography>
-          {rows.length > 0 && (
+          {filledCount > 0 && (
             <Typography variant="body2" color="text.secondary">
-              ({rows.length} {rows.length === 1 ? "entry" : "entries"})
+              ({filledCount} {filledCount === 1 ? "activity" : "activities"} filled)
             </Typography>
           )}
         </Stack>
@@ -46,27 +43,14 @@ export function CategorySection({
 
       <AccordionDetails>
         <Stack spacing={2}>
-          {rows.map((row) => (
-            <ActivityRow
-              key={row.rowId}
-              activities={activities}
-              activityId={row.activityId}
-              quantity={row.quantity}
-              onActivityChange={(id) => onUpdateRow(row.rowId, "activityId", id)}
-              onQuantityChange={(q) => onUpdateRow(row.rowId, "quantity", q)}
-              onRemove={() => onRemoveRow(row.rowId)}
+          {activities.map((activity) => (
+            <ActivityInput
+              key={activity.id}
+              activity={activity}
+              quantity={quantities[activity.id] ?? ""}
+              onChange={(q) => onQuantityChange(activity.id, q)}
             />
           ))}
-
-          <Button
-            size="small"
-            variant="text"
-            startIcon={<AddIcon />}
-            onClick={onAddRow}
-            sx={{ alignSelf: "flex-start" }}
-          >
-            Add activity
-          </Button>
         </Stack>
       </AccordionDetails>
     </Accordion>

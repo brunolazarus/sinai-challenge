@@ -3,6 +3,7 @@ import type {
   Category,
   Transformation,
   EmissionFactor,
+  EmissionCategory,
   CalculationInput,
   FootprintSummary,
 } from "@sinai/shared";
@@ -31,13 +32,13 @@ export const api = {
   categories: (): Promise<{ categories: Category[] }> =>
     get("/v1/categories"),
 
-  activities: (category?: string): Promise<{ activities: Activity[] }> =>
+  activities: (category?: EmissionCategory): Promise<{ activities: Activity[] }> =>
     get(category ? `/v1/activities?category=${category}` : "/v1/activities"),
 
   transformations: (): Promise<{ transformations: Transformation[] }> =>
     get("/v1/transformations"),
 
-  factors: (category?: string): Promise<{ factors: EmissionFactor[] }> =>
+  factors: (category?: EmissionCategory): Promise<{ factors: EmissionFactor[] }> =>
     get(category ? `/v1/factors?category=${category}` : "/v1/factors"),
 
   // ── Calculation ─────────────────────────────────────────────────────────────

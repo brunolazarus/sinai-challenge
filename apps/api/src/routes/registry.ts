@@ -1,7 +1,14 @@
 import { createRoute, z } from "@hono/zod-openapi";
 import type { OpenAPIHono } from "@hono/zod-openapi";
-import { EMISSION_CATEGORIES } from "@sinai/shared";
-import { CATEGORIES, ACTIVITIES, TRANSFORMATIONS, FACTORS } from "../lib/registry/index.js";
+import { EMISSION_CATEGORIES, type EmissionCategory } from "@sinai/shared";
+
+const EMISSION_CATEGORY_VALUES = Object.values(EMISSION_CATEGORIES) as [EmissionCategory, ...EmissionCategory[]];
+import {
+  CATEGORIES,
+  ACTIVITIES,
+  TRANSFORMATIONS,
+  FACTORS,
+} from "../lib/registry/index.js";
 
 // ── Schemas ───────────────────────────────────────────────────────────────────
 
@@ -37,23 +44,28 @@ const EmissionFactorSchema = z
   .openapi("EmissionFactor");
 
 const CategoryFilterSchema = z.object({
-  category: z.enum(EMISSION_CATEGORIES).optional().openapi({
+  category: z.enum(EMISSION_CATEGORY_VALUES).optional().openapi({
     description: "Filter by emission category",
     example: "transportation",
   }),
 });
 
-// ── Routes ────────────────────────────────────────────────────────────────────
+// ── Routes Definition────────────────────────────────────────────────────────────────────
 
 const categoriesRoute = createRoute({
   method: "get",
   path: "/v1/categories",
   tags: ["Registry"],
   summary: "List categories",
-  description: "Logical groupings for activities. Categories contain no formulas or factors.",
+  description:
+    "Logical groupings for activities. Categories contain no formulas or factors.",
   responses: {
     200: {
-      content: { "application/json": { schema: z.object({ categories: z.array(CategorySchema) }) } },
+      content: {
+        "application/json": {
+          schema: z.object({ categories: z.array(CategorySchema) }),
+        },
+      },
       description: "All emission categories",
     },
   },
@@ -70,7 +82,11 @@ const activitiesRoute = createRoute({
   request: { query: CategoryFilterSchema },
   responses: {
     200: {
-      content: { "application/json": { schema: z.object({ activities: z.array(ActivitySchema) }) } },
+      content: {
+        "application/json": {
+          schema: z.object({ activities: z.array(ActivitySchema) }),
+        },
+      },
       description: "Activities, optionally filtered by category",
     },
   },
@@ -85,7 +101,9 @@ const transformationsRoute = createRoute({
   responses: {
     200: {
       content: {
-        "application/json": { schema: z.object({ transformations: z.array(TransformationSchema) }) },
+        "application/json": {
+          schema: z.object({ transformations: z.array(TransformationSchema) }),
+        },
       },
       description: "All available transformations",
     },
@@ -104,32 +122,42 @@ const factorsRoute = createRoute({
   responses: {
     200: {
       content: {
-        "application/json": { schema: z.object({ factors: z.array(EmissionFactorSchema) }) },
+        "application/json": {
+          schema: z.object({ factors: z.array(EmissionFactorSchema) }),
+        },
       },
       description: "Emission factors, optionally filtered by category",
     },
   },
 });
 
-// ── Registration ──────────────────────────────────────────────────────────────
+// ── Route Registration ──────────────────────────────────────────────────────────────
 
 export function registerRegistryRoutes(app: OpenAPIHono) {
-  app.openapi(categoriesRoute, (c) => c.json({ categories: CATEGORIES }));
+  app.openapi(categoriesRoute, (context) =>
+    context.json({ categories: CATEGORIES }),
+  );
 
   app.openapi(activitiesRoute, (c) => {
     const { category } = c.req.valid("query");
-    const activities = category ? ACTIVITIES.filter((a) => a.category === category) : ACTIVITIES;
+    const activities = category
+      ? ACTIVITIES.filter((a) => a.category === category)
+      : ACTIVITIES;
     return c.json({ activities });
   });
 
-  app.openapi(transformationsRoute, (c) => c.json({ transformations: TRANSFORMATIONS }));
+  app.openapi(transformationsRoute, (context) =>
+    context.json({ transformations: TRANSFORMATIONS }),
+  );
 
-  app.openapi(factorsRoute, (c) => {
-    const { category } = c.req.valid("query");
-    if (!category) return c.json({ factors: FACTORS });
+  app.openapi(factorsRoute, (context) => {
+    const { category } = context.req.valid("query");
+    if (!category) return context.json({ factors: FACTORS });
     const activityIds = new Set(
-      ACTIVITIES.filter((a) => a.category === category).map((a) => a.id)
+      ACTIVITIES.filter((a) => a.category === category).map((a) => a.id),
     );
-    return c.json({ factors: FACTORS.filter((f) => activityIds.has(f.activity)) });
+    return context.json({
+      factors: FACTORS.filter((f) => activityIds.has(f.activity)),
+    });
   });
 }

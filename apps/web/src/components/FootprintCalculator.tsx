@@ -1,5 +1,6 @@
 import { useState, useMemo } from "react";
 import type { CalculationInput } from "@sinai/shared";
+import { EMISSION_CATEGORIES } from "@sinai/shared";
 import {
   Box,
   Button,
@@ -14,14 +15,7 @@ import { useCalculate } from "../hooks/useCalculate";
 import { CategorySection } from "./CategorySection";
 import { ResultsPanel } from "./ResultsPanel";
 
-const CATEGORIES = [
-  { id: "transportation", label: "Transportation" },
-  { id: "energy", label: "Energy" },
-  { id: "diet", label: "Diet" },
-  { id: "waste", label: "Waste" },
-] as const;
-
-type CategoryId = (typeof CATEGORIES)[number]["id"];
+const ORDERED_CATEGORIES = Object.values(EMISSION_CATEGORIES);
 
 export function FootprintCalculator() {
   const { data: activitiesByCategory, isLoading: loadingActivities } = useActivities();
@@ -62,10 +56,10 @@ export function FootprintCalculator() {
       </Typography>
 
       <Stack spacing={1} sx={{ mb: 4 }}>
-        {CATEGORIES.map(({ id, label }: { id: CategoryId; label: string }) => (
+        {ORDERED_CATEGORIES.map((id) => (
           <CategorySection
             key={id}
-            label={label}
+            label={id.charAt(0).toUpperCase() + id.slice(1)}
             activities={activitiesByCategory?.[id] ?? []}
             quantities={quantities}
             onQuantityChange={handleQuantityChange}

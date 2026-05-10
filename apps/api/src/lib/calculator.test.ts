@@ -48,6 +48,34 @@ describe("calculateSingle", () => {
       calculateSingle({ activityId: "beef", quantity: 10, factorId: "nonexistent_factor" })
     ).toThrow("No emission factor found for activity: beef");
   });
+
+  it("annualized: daily miles × 365 × factor", () => {
+    // 10 miles/day × 365 × 0.404 kg/mile = 1474.6 kg CO2e/year
+    const result = calculateSingle({ activityId: "gasoline_car_daily", quantity: 10 });
+    expect(result.result.kgCO2e).toBeCloseTo(10 * 365 * 0.404, 1);
+    expect(result.inputUnit).toBe("mile/day");
+  });
+
+  it("weekly_to_yearly: weekly kg × 52 × factor", () => {
+    // 1 kg/week beef × 52 × 27.0 kg/kg = 1404 kg CO2e/year
+    const result = calculateSingle({ activityId: "beef_weekly", quantity: 1 });
+    expect(result.result.kgCO2e).toBeCloseTo(1 * 52 * 27.0, 0);
+    expect(result.inputUnit).toBe("kg/week");
+  });
+
+  it("input_km: converts km to miles before applying factor", () => {
+    // 100 km ÷ 1.60934 mi/km × 0.404 kg/mi ≈ 25.1 kg CO2e
+    const result = calculateSingle({ activityId: "gasoline_car_km", quantity: 100 });
+    expect(result.result.kgCO2e).toBeCloseTo((100 / 1.60934) * 0.404, 1);
+    expect(result.inputUnit).toBe("km");
+  });
+
+  it("input_lbs: converts pounds to kg before applying factor", () => {
+    // 10 lb ÷ 2.20462 kg/lb × 27.0 kg CO2e/kg ≈ 122.5 kg CO2e
+    const result = calculateSingle({ activityId: "beef_lbs", quantity: 10 });
+    expect(result.result.kgCO2e).toBeCloseTo((10 / 2.20462) * 27.0, 1);
+    expect(result.inputUnit).toBe("lb");
+  });
 });
 
 describe("calculateFootprint", () => {

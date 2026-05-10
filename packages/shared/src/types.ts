@@ -1,4 +1,7 @@
-export type EmissionCategory = "transportation" | "energy" | "diet" | "waste";
+import { EMISSION_CATEGORIES, TRANSFORMATION_IDS, type InputUnit } from "./constants.js";
+
+export type EmissionCategory = (typeof EMISSION_CATEGORIES)[keyof typeof EMISSION_CATEGORIES];
+export type TransformationId = (typeof TRANSFORMATION_IDS)[keyof typeof TRANSFORMATION_IDS];
 
 export interface Category {
   id: EmissionCategory;
@@ -9,8 +12,8 @@ export interface Activity {
   id: string;
   category: EmissionCategory;
   label: string;
-  inputUnit: string;
-  transformation: string;
+  inputUnit: InputUnit;
+  transformation: TransformationId;
 }
 
 export interface Transformation {
@@ -39,7 +42,7 @@ export interface CalculationInput {
 export interface CalculationResult {
   activity: string;
   input: number;
-  inputUnit: string;
+  inputUnit: InputUnit;
   factor: string;
   result: {
     kgCO2e: number;

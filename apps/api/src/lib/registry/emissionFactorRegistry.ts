@@ -77,6 +77,31 @@ export const FACTORS: EmissionFactor[] = [
       "Electric segments use grid factors; diesel segments use direct combustion factors.",
   },
 
+  {
+    id: "gasoline_car_daily_epa2023_us",
+    activity: "gasoline_car_daily",
+    value: 0.404,
+    unit: "kgCO2e_per_mile",
+    region: "US",
+    year: 2023,
+    source: "EPA GHG Emission Factors Hub 2023",
+    methodology:
+      "Same per-mile factor as gasoline_car (0.404 kg CO2e/mile). " +
+      "The annualized transformation multiplies daily miles × 365 before applying the factor.",
+  },
+  {
+    id: "gasoline_car_km_epa2023_us",
+    activity: "gasoline_car_km",
+    value: 0.404,
+    unit: "kgCO2e_per_mile",
+    region: "US",
+    year: 2023,
+    source: "EPA GHG Emission Factors Hub 2023",
+    methodology:
+      "Same per-mile factor as gasoline_car (0.404 kg CO2e/mile). " +
+      "The input_km transformation converts km ÷ 1.60934 to miles before applying the factor.",
+  },
+
   // ── Energy ────────────────────────────────────────────────────────────────
   {
     id: "electricity_egrid2023_us",
@@ -89,6 +114,19 @@ export const FACTORS: EmissionFactor[] = [
     methodology:
       "National average covers full US generation mix (coal, gas, nuclear, hydro, wind, solar). " +
       "Includes CO2, CH4, N2O from combustion. Regional grids vary widely; use eGRID subregion factors for location-specific estimates.",
+  },
+  {
+    id: "electricity_egrid2023_northeast",
+    activity: "electricity",
+    value: 0.21,
+    unit: "kgCO2e_per_kWh",
+    region: "US-Northeast",
+    year: 2023,
+    source: "EPA eGRID2023 NPCC subregion",
+    methodology:
+      "NPCC (Northeast Power Coordinating Council) subregion average. Higher share of nuclear and hydro " +
+      "versus the national mix drives the lower intensity (0.21 vs 0.386 kg CO2e/kWh). " +
+      "Covers New England and New York. Use this factor for households in CT, MA, ME, NH, NY, RI, VT.",
   },
   {
     id: "natural_gas_epa2023_us",
@@ -199,6 +237,31 @@ export const FACTORS: EmissionFactor[] = [
     methodology:
       "Fertilizer N2O from soil application dominates. On-farm machinery, irrigation, and transport included. " +
       "Conservative upper estimate for a mixed-vegetable basket.",
+  },
+
+  {
+    id: "beef_weekly_epa2023_us",
+    activity: "beef_weekly",
+    value: 27.0,
+    unit: "kgCO2e_per_kg",
+    region: "US",
+    year: 2023,
+    source: "EPA GHG Emission Factors Hub 2023 + USDA Agricultural LCA",
+    methodology:
+      "Same per-kg factor as beef (27.0 kg CO2e/kg). " +
+      "The weekly_to_yearly transformation multiplies weekly kg × 52 before applying the factor.",
+  },
+  {
+    id: "beef_lbs_epa2023_us",
+    activity: "beef_lbs",
+    value: 27.0,
+    unit: "kgCO2e_per_kg",
+    region: "US",
+    year: 2023,
+    source: "EPA GHG Emission Factors Hub 2023 + USDA Agricultural LCA",
+    methodology:
+      "Same per-kg factor as beef (27.0 kg CO2e/kg). " +
+      "The input_lbs transformation converts pounds ÷ 2.20462 to kg before applying the factor.",
   },
 
   // ── Waste ─────────────────────────────────────────────────────────────────

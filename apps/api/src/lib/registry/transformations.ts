@@ -1,13 +1,41 @@
-import type { Transformation } from "@sinai/shared";
+import type { Transformation, TransformationId } from "@sinai/shared";
+import { TRANSFORMATION_IDS } from "@sinai/shared";
 
-export const TRANSFORMATIONS: Transformation[] = [
+// Backend-only extension — `apply` is dropped when serialized to JSON by c.json()
+export interface TransformationDef extends Omit<Transformation, "id"> {
+  id: TransformationId;
+  apply: (input: number, factor: number) => number;
+}
+
+export const TRANSFORMATIONS: TransformationDef[] = [
   {
-    id: "simple_multiply",
+    id: TRANSFORMATION_IDS.SIMPLE_MULTIPLY,
     label: "Simple Multiply",
-    formula: "input * factor",
+    formula: "input × factor",
+    apply: (input, factor) => input * factor,
   },
-  // Future slots — add without changing existing activities:
-  // { id: "annualized",      label: "Annualized",      formula: "input * 365 * factor" }
-  // { id: "weekly_to_yearly", label: "Weekly to Yearly", formula: "input * 52 * factor" }
-  // { id: "spend_based",     label: "Spend-Based",      formula: "input * factor" }
+  {
+    id: TRANSFORMATION_IDS.ANNUALIZED,
+    label: "Daily to Annual",
+    formula: "input × 365 × factor",
+    apply: (input, factor) => input * 365 * factor,
+  },
+  {
+    id: TRANSFORMATION_IDS.WEEKLY_TO_YEARLY,
+    label: "Weekly to Annual",
+    formula: "input × 52 × factor",
+    apply: (input, factor) => input * 52 * factor,
+  },
+  {
+    id: TRANSFORMATION_IDS.INPUT_KM,
+    label: "Kilometres input (factor per mile)",
+    formula: "(input / 1.60934) × factor",
+    apply: (input, factor) => (input / 1.60934) * factor,
+  },
+  {
+    id: TRANSFORMATION_IDS.INPUT_LBS,
+    label: "Pounds input (factor per kg)",
+    formula: "(input / 2.20462) × factor",
+    apply: (input, factor) => (input / 2.20462) * factor,
+  },
 ];

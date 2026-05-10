@@ -1,120 +1,82 @@
 # Plan: Category-by-Category Calculator UI
 
+> **Status: Complete.** All phases implemented. This document reflects the final design.
+
 ## Overview
 
-Implement the carbon footprint calculator frontend as a category-driven form.
-Each of the 4 emission categories (transportation, energy, diet, waste) gets its own
-accordion section. Users add activity rows per category, then calculate their total footprint.
+The carbon footprint calculator frontend is a category-driven form. Each of the four
+emission categories (Transportation, Energy, Diet, Waste) gets its own accordion section.
+Every activity within a category is always visible with its own labelled input field —
+users fill in amounts for the activities that apply to them, then submit to calculate.
 
 ---
 
-## 0. Package cleanup
-
-- Remove `graphql` and `graphql-request` from `apps/web/package.json`
-- Update the Vite proxy in `vite.config.ts` from `/graphql` → `/v1`
-
----
-
-## 1. API client — `src/lib/api.ts`
-
-Replace `src/lib/graphql-client.ts` with a typed fetch wrapper:
-
-```ts
-get<T>(path: string): Promise<T>
-post<T>(path: string, body: unknown): Promise<T>
-```
-
-Import shared types (`Activity`, `CalculationInput`, `FootprintSummary`) directly from
-`@sinai/shared` — no code generation needed.
-
----
-
-## 2. React Query hooks — `src/hooks/`
-
-| File | Hook | Description |
-|------|------|-------------|
-| `useActivities.ts` | `useActivities()` | `GET /v1/activities` — grouped by category |
-| `useCalculate.ts` | `useCalculate()` | `useMutation` wrapping `POST /v1/calculate` |
-
----
-
-## 3. Component tree
+## Final Component Tree
 
 ```
 App
 └── FootprintCalculator          ← orchestrates state + layout
     ├── CategorySection × 4      ← one MUI Accordion per category
-    │   ├── ActivityRow × n      ← dynamically added rows
-    │   │   ├── ActivitySelect   ← MUI Select (activities for this category)
-    │   │   ├── QuantityInput    ← MUI TextField type="number"
-    │   │   ├── UnitLabel        ← read-only, resolved from selected activity
-    │   │   └── RemoveButton     ← IconButton
-    │   └── AddRowButton         ← "+ Add activity"
-    ├── CalculateButton          ← disabled until ≥1 valid row exists
-    └── ResultsPanel             ← only rendered after a successful calculate
-        ├── TotalCard            ← big number: X kg CO₂e
+    │   └── ActivityInput × n    ← one input per activity (fixed, not user-added)
+    │       ├── Activity label   ← read-only, from registry
+    │       ├── QuantityInput    ← MUI TextField type="number"
+    │       └── UnitLabel        ← read-only, from activity.inputUnit
+    ├── CalculateButton          ← disabled until ≥1 quantity > 0
+    └── ResultsPanel             ← rendered after a successful calculate
+        ├── TotalCard            ← totalKgCO2e on primary.main background
         └── ResultRow × n        ← per-activity breakdown with factor provenance
 ```
 
 ---
 
-## 4. State shape
+## State Shape
 
-Local state in `FootprintCalculator`:
+Flat map in `FootprintCalculator` — one entry per activity ID the user has touched:
 
 ```ts
-type InputRow = { rowId: string; activityId: string; quantity: string };
-
-// keyed by categoryId
-const [rows, setRows] = useState<Record<string, InputRow[]>>({
-  transportation: [],
-  energy: [],
-  diet: [],
-  waste: [],
-});
+// activityId → raw quantity string (empty = not entered)
+const [quantities, setQuantities] = useState<Record<string, string>>({});
 ```
 
-On "Calculate", flatten all rows into `CalculationInput[]` (skip rows with empty quantity
-or no activity selected) and fire the mutation.
+On "Calculate", entries are filtered to `quantity > 0` and mapped to `CalculationInput[]`
+before calling `POST /v1/calculate`.
 
 ---
 
-## 5. Interaction flow
+## Interaction Flow
 
 1. Page loads → `useActivities()` fetches and groups activities by category
 2. Each `CategorySection` renders as a collapsed MUI Accordion
-3. User expands a category, clicks "+ Add activity"
-4. A row appears: dropdown of activities for that category + quantity field
-5. Unit label auto-updates when activity is selected (resolved from registry)
-6. User fills in ≥1 row across any categories
-7. "Calculate Footprint" button (bottom of page) becomes enabled
-8. On click → `POST /v1/calculate` → `ResultsPanel` renders below the form
-9. User can keep editing rows; re-calculating updates results in place
+3. User expands a category — all activities for that category are visible immediately
+4. User types an amount into any input field
+5. The accordion header shows how many activities have been filled (e.g. "2 activities filled")
+6. "Calculate Footprint" button becomes enabled once at least one quantity > 0 exists
+7. On click → `POST /v1/calculate` → `ResultsPanel` renders below the form
+8. User can keep editing inputs; re-calculating updates results in place
 
 ---
 
-## 6. MUI components
+## Key Design Decisions
 
-| Purpose | Component |
-|---------|-----------|
-| Category sections | `Accordion`, `AccordionSummary`, `AccordionDetails` |
-| Activity dropdown | `Select`, `MenuItem` |
-| Quantity input | `TextField` type="number" |
-| Remove row | `IconButton` + `DeleteOutlineIcon` |
-| Add row / Calculate | `Button` |
-| Results total | `Card`, `Typography` |
-| Loading state | `CircularProgress` |
+| Decision | Rationale |
+|----------|-----------|
+| Fixed inputs per activity (not user-added rows) | Reduces friction — no "add row" step; all options are discoverable upfront |
+| Flat `Record<activityId, string>` state | Simpler than `Record<categoryId, InputRow[]>`; no row IDs needed |
+| `staleTime: Infinity` on `useActivities` | Registry data is static at runtime — no need to refetch |
+| `factorId` optional on calculate | API defaults to US 2023 EPA factors; override available for region/year |
 
 ---
 
-## 7. Implementation order
+## Implementation Summary
 
-1. **Package cleanup** — remove GraphQL deps, update Vite proxy
-2. **`src/lib/api.ts`** — typed fetch wrappers
-3. **`src/hooks/useActivities.ts`** — fetch + group by category
-4. **`src/hooks/useCalculate.ts`** — calculate mutation
-5. **`src/components/ActivityRow.tsx`** — select + quantity + unit + remove
-6. **`src/components/CategorySection.tsx`** — accordion + row list + add button
-7. **`src/components/ResultsPanel.tsx`** — total card + per-activity breakdown
-8. **`src/components/FootprintCalculator.tsx`** — wires state, sections, results
-9. **`src/App.tsx`** — render `FootprintCalculator`
+| Step | File | Status |
+|------|------|--------|
+| 0 | Package cleanup, Vite proxy | ✅ |
+| 1 | `src/lib/api.ts` — typed fetch wrapper | ✅ |
+| 2 | `src/hooks/useActivities.ts`, `useCalculate.ts` | ✅ |
+| 3 | `src/components/ActivityInput.tsx` | ✅ |
+| 4 | `src/components/CategorySection.tsx` | ✅ |
+| 5 | `src/components/ResultsPanel.tsx` | ✅ |
+| 6 | `src/components/FootprintCalculator.tsx` | ✅ |
+| 7 | `src/App.tsx` — ThemeProvider + render | ✅ |
+| 8 | Tests — `CategorySection.test.tsx` | ✅ |

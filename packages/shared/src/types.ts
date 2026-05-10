@@ -1,7 +1,14 @@
-import { EMISSION_CATEGORIES, TRANSFORMATION_IDS, type InputUnit } from "./constants.js";
+import type {
+  EMISSION_CATEGORIES,
+  INPUT_UNITS,
+  TRANSFORMATION_IDS,
+} from "./constants.js";
 
-export type EmissionCategory = (typeof EMISSION_CATEGORIES)[keyof typeof EMISSION_CATEGORIES];
-export type TransformationId = (typeof TRANSFORMATION_IDS)[keyof typeof TRANSFORMATION_IDS];
+export type EmissionCategory =
+  (typeof EMISSION_CATEGORIES)[keyof typeof EMISSION_CATEGORIES];
+export type TransformationId =
+  (typeof TRANSFORMATION_IDS)[keyof typeof TRANSFORMATION_IDS];
+export type InputUnit = (typeof INPUT_UNITS)[keyof typeof INPUT_UNITS];
 
 export interface Category {
   id: EmissionCategory;

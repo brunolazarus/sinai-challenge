@@ -5,12 +5,6 @@ import { api } from "../lib/api";
 
 export type ActivitiesByCategory = Record<EmissionCategory, Activity[]>;
 
-const EMPTY_BY_CATEGORY: ActivitiesByCategory = {
-  [EMISSION_CATEGORIES.TRANSPORTATION]: [],
-  [EMISSION_CATEGORIES.ENERGY]: [],
-  [EMISSION_CATEGORIES.DIET]: [],
-  [EMISSION_CATEGORIES.WASTE]: [],
-};
 
 export function useActivities() {
   return useQuery({
@@ -22,7 +16,12 @@ export function useActivities() {
           acc[activity.category].push(activity);
           return acc;
         },
-        { ...EMPTY_BY_CATEGORY },
+        {
+          [EMISSION_CATEGORIES.TRANSPORTATION]: [],
+          [EMISSION_CATEGORIES.ENERGY]: [],
+          [EMISSION_CATEGORIES.DIET]: [],
+          [EMISSION_CATEGORIES.WASTE]: [],
+        },
       ),
     staleTime: Infinity,
   });

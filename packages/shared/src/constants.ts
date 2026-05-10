@@ -33,5 +33,3 @@ export const INPUT_UNITS = {
   LB: "lb",
   KG_PER_WEEK: "kg/week",
 } as const;
-
-export type InputUnit = (typeof INPUT_UNITS)[keyof typeof INPUT_UNITS];

@@ -1,29 +1,33 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import type { Activity } from "@sinai/shared";
+import {
+  type Activity,
+  TRANSFORMATION_IDS,
+  EMISSION_CATEGORIES,
+} from "@sinai/shared";
 import { CategorySection } from "./CategorySection";
 
 const activities: Activity[] = [
   {
     id: "gasoline_car",
-    category: "transportation",
+    category: EMISSION_CATEGORIES.TRANSPORTATION,
     label: "Gasoline Car",
     inputUnit: "mile",
-    transformation: "simple_multiply",
+    transformation: TRANSFORMATION_IDS.SIMPLE_MULTIPLY,
   },
   {
     id: "electric_car",
-    category: "transportation",
+    category: EMISSION_CATEGORIES.TRANSPORTATION,
     label: "Electric Car",
     inputUnit: "mile",
-    transformation: "simple_multiply",
+    transformation: TRANSFORMATION_IDS.SIMPLE_MULTIPLY,
   },
 ];
 
 function renderSection(
   quantities: Record<string, string> = {},
-  onQuantityChange = vi.fn()
+  onQuantityChange = vi.fn(),
 ) {
   return render(
     <CategorySection
@@ -31,7 +35,7 @@ function renderSection(
       activities={activities}
       quantities={quantities}
       onQuantityChange={onQuantityChange}
-    />
+    />,
   );
 }
 
@@ -80,6 +84,9 @@ describe("CategorySection", () => {
     const inputs = screen.getAllByRole("spinbutton");
     await user.type(inputs[0]!, "42");
 
-    expect(onQuantityChange).toHaveBeenCalledWith("gasoline_car", expect.any(String));
+    expect(onQuantityChange).toHaveBeenCalledWith(
+      "gasoline_car",
+      expect.any(String),
+    );
   });
 });

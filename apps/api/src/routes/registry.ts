@@ -2,7 +2,10 @@ import { createRoute, z } from "@hono/zod-openapi";
 import type { OpenAPIHono } from "@hono/zod-openapi";
 import { EMISSION_CATEGORIES, type EmissionCategory } from "@sinai/shared";
 
-const EMISSION_CATEGORY_VALUES = Object.values(EMISSION_CATEGORIES) as [EmissionCategory, ...EmissionCategory[]];
+const EMISSION_CATEGORY_VALUES = Object.values(EMISSION_CATEGORIES) as [
+  EmissionCategory,
+  ...EmissionCategory[],
+];
 import {
   CATEGORIES,
   ACTIVITIES,
@@ -46,7 +49,7 @@ const EmissionFactorSchema = z
 const CategoryFilterSchema = z.object({
   category: z.enum(EMISSION_CATEGORY_VALUES).optional().openapi({
     description: "Filter by emission category",
-    example: "transportation",
+    example: EMISSION_CATEGORIES.TRANSPORTATION,
   }),
 });
 

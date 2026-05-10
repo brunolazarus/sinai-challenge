@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { app } from "../app.js";
+import { EMISSION_CATEGORIES } from "@sinai/shared";
 
 async function json(res: Response) {
   return res.json() as Promise<Record<string, unknown>>;
@@ -21,7 +22,7 @@ describe("GET /v1/categories", () => {
     const categories = body["categories"] as { id: string }[];
     expect(categories).toHaveLength(4);
     expect(categories.map((c) => c.id)).toEqual(
-      expect.arrayContaining(["transportation", "energy", "diet", "waste"])
+      expect.arrayContaining(Object.values(EMISSION_CATEGORIES)),
     );
   });
 
@@ -62,7 +63,9 @@ describe("GET /v1/activities", () => {
     const body = await json(res);
     const activities = body["activities"] as { category: string }[];
     expect(activities.length).toBeGreaterThan(0);
-    activities.forEach((a) => expect(a.category).toBe("transportation"));
+    activities.forEach((a) =>
+      expect(a.category).toBe(EMISSION_CATEGORIES.TRANSPORTATION),
+    );
   });
 
   it("returns 400 for an unknown category", async () => {
@@ -76,7 +79,10 @@ describe("GET /v1/transformations", () => {
     const res = await app.request("/v1/transformations");
     expect(res.status).toBe(200);
     const body = await json(res);
-    const transformations = body["transformations"] as Record<string, unknown>[];
+    const transformations = body["transformations"] as Record<
+      string,
+      unknown
+    >[];
     expect(transformations.length).toBeGreaterThan(0);
     expect(transformations[0]).toHaveProperty("id");
     expect(transformations[0]).toHaveProperty("label");
@@ -113,7 +119,9 @@ describe("GET /v1/factors", () => {
       app.request("/v1/factors"),
     ]);
     expect(energyRes.status).toBe(200);
-    const energy = ((await energyRes.json()) as Record<string, unknown[]>)["factors"];
+    const energy = ((await energyRes.json()) as Record<string, unknown[]>)[
+      "factors"
+    ];
     const all = ((await allRes.json()) as Record<string, unknown[]>)["factors"];
     expect(energy!.length).toBeGreaterThan(0);
     expect(energy!.length).toBeLessThan(all!.length);
@@ -135,7 +143,9 @@ describe("POST /v1/calculate", () => {
   }
 
   it("returns a footprint summary for a single valid input", async () => {
-    const res = await post({ inputs: [{ activityId: "gasoline_car", quantity: 100 }] });
+    const res = await post({
+      inputs: [{ activityId: "gasoline_car", quantity: 100 }],
+    });
     expect(res.status).toBe(200);
     const body = await json(res);
     expect(body).toHaveProperty("totalKgCO2e");
@@ -158,7 +168,9 @@ describe("POST /v1/calculate", () => {
   });
 
   it("preserves factor provenance in results", async () => {
-    const res = await post({ inputs: [{ activityId: "gasoline_car", quantity: 1 }] });
+    const res = await post({
+      inputs: [{ activityId: "gasoline_car", quantity: 1 }],
+    });
     const body = await json(res);
     const result = (body["results"] as { factor: string }[])[0];
     expect(result!.factor).toBe("gasoline_car_epa2023_us");
@@ -166,7 +178,13 @@ describe("POST /v1/calculate", () => {
 
   it("accepts an explicit factorId override", async () => {
     const res = await post({
-      inputs: [{ activityId: "gasoline_car", quantity: 100, factorId: "gasoline_car_epa2023_us" }],
+      inputs: [
+        {
+          activityId: "gasoline_car",
+          quantity: 100,
+          factorId: "gasoline_car_epa2023_us",
+        },
+      ],
     });
     expect(res.status).toBe(200);
   });
@@ -177,19 +195,23 @@ describe("POST /v1/calculate", () => {
   });
 
   it("returns 400 for an unknown activityId", async () => {
-    const res = await post({ inputs: [{ activityId: "unknown_activity", quantity: 10 }] });
+    const res = await post({
+      inputs: [{ activityId: "unknown_activity", quantity: 10 }],
+    });
     expect(res.status).toBe(400);
     const body = await json(res);
-    expect((body["error"] as string)).toMatch(/unknown_activity/i);
+    expect(body["error"] as string).toMatch(/unknown_activity/i);
   });
 
   it("returns 400 for an unknown factorId override", async () => {
     const res = await post({
-      inputs: [{ activityId: "beef", quantity: 10, factorId: "nonexistent_factor" }],
+      inputs: [
+        { activityId: "beef", quantity: 10, factorId: "nonexistent_factor" },
+      ],
     });
     expect(res.status).toBe(400);
     const body = await json(res);
-    expect((body["error"] as string)).toMatch(/nonexistent_factor/i);
+    expect(body["error"] as string).toMatch(/nonexistent_factor/i);
   });
 
   it("returns 400 for a negative quantity", async () => {

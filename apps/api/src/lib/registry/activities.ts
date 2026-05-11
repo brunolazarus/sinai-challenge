@@ -22,6 +22,13 @@ export const ACTIVITIES: Activity[] = [
     transformation: TRANSFORMATION_IDS.SIMPLE_MULTIPLY,
   },
   {
+    id: "motorcycle",
+    label: "Motorcycle",
+    category: EMISSION_CATEGORIES.TRANSPORTATION,
+    inputUnit: INPUT_UNITS.MILE,
+    transformation: TRANSFORMATION_IDS.SIMPLE_MULTIPLY,
+  },
+  {
     id: "short_haul_flight",
     label: "Short-Haul Flight (< 500 mi)",
     category: EMISSION_CATEGORIES.TRANSPORTATION,

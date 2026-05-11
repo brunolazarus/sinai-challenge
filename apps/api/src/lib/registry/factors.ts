@@ -17,6 +17,18 @@ export const FACTORS: EmissionFactor[] = [
       "Includes tailpipe CO2, CH4 (GWP100=28), and N2O (GWP100=265) from combustion.",
   },
   {
+    id: "motorcycle_epa2023_us",
+    activity: "motorcycle",
+    value: 0.184,
+    unit: "kgCO2e_per_mile",
+    region: "US",
+    year: 2023,
+    source: "EPA GHG Emission Factors Hub 2023",
+    methodology:
+      "Based on average US motorcycle fuel economy of ~48 MPG and 8.887 kg CO2e per gallon of gasoline. " +
+      "Includes tailpipe CO2, CH4 (GWP100=28), and N2O (GWP100=265) from combustion.",
+  },
+  {
     id: "electric_car_epa2023_us",
     activity: "electric_car",
     value: 0.115,

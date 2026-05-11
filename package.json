@@ -8,7 +8,10 @@
     "lint": "turbo lint",
     "test": "turbo test",
     "type-check": "turbo type-check",
-    "clean": "turbo clean && rm -rf node_modules"
+    "clean": "turbo clean && rm -rf node_modules",
+    "stop": "lsof -ti :3000 -ti :4000 | xargs kill -9 2>/dev/null || true",
+    "stop:web": "lsof -ti :3000 | xargs kill -9 2>/dev/null || true",
+    "stop:api": "lsof -ti :4000 | xargs kill -9 2>/dev/null || true"
   },
   "devDependencies": {
     "turbo": "^2.0.0",

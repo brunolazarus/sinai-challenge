@@ -15,11 +15,17 @@ import { useCalculate } from "../hooks/useCalculate";
 import { CategorySection } from "./CategorySection";
 import { ResultsPanel } from "./ResultsPanel";
 
-const ORDERED_CATEGORIES = Object.values(EMISSION_CATEGORIES);
+const ORDERED_CATEGORIES = Object.values(EMISSION_CATEGORIES).sort();
 
 export function FootprintCalculator() {
-  const { data: activitiesByCategory, isLoading: loadingActivities } = useActivities();
-  const { mutate: calculate, data: summary, isPending: calculating, error } = useCalculate();
+  const { data: activitiesByCategory, isLoading: loadingActivities } =
+    useActivities();
+  const {
+    mutate: calculate,
+    data: summary,
+    isPending: calculating,
+    error,
+  } = useCalculate();
 
   const [quantities, setQuantities] = useState<Record<string, string>>({});
 

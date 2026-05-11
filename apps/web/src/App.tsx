@@ -1,5 +1,6 @@
 import { createTheme, CssBaseline, ThemeProvider } from "@mui/material";
 import { FootprintCalculator } from "./components/FootprintCalculator";
+import { ErrorBoundary } from "./components/ErrorBoundary";
 
 const theme = createTheme({
   palette: {
@@ -12,7 +13,9 @@ export default function App() {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <FootprintCalculator />
+      <ErrorBoundary>
+        <FootprintCalculator />
+      </ErrorBoundary>
     </ThemeProvider>
   );
 }

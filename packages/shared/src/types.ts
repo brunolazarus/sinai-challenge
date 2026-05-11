@@ -24,7 +24,7 @@ export interface Activity {
 }
 
 export interface Transformation {
-  id: string;
+  id: TransformationId;
   label: string;
   formula: string;
 }

@@ -8,8 +8,8 @@ import {
 export const ACTIVITIES: Activity[] = [
   // ── Transportation ────────────────────────────────────────────────────────
   {
-    label: "Gasoline Car",
     id: "gasoline_car",
+    label: "Gasoline Car",
     category: EMISSION_CATEGORIES.TRANSPORTATION,
     inputUnit: INPUT_UNITS.MILE,
     transformation: TRANSFORMATION_IDS.SIMPLE_MULTIPLY,

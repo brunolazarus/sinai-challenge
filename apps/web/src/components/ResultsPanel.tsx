@@ -12,7 +12,7 @@ interface ResultsPanelProps {
   summary: FootprintSummary;
 }
 
-export function ResultsPanel({ summary }: ResultsPanelProps) {
+export const ResultsPanel = ({ summary }: ResultsPanelProps) => {
   return (
     <Stack spacing={2}>
       <Card

@@ -1,4 +1,4 @@
-import type { Activity } from "@sinai/shared";
+import type { Activity, EmissionFactor } from "@sinai/shared";
 import {
   Accordion,
   AccordionDetails,
@@ -14,20 +14,26 @@ interface CategorySectionProps {
   activities: Activity[];
   quantities: Record<string, string>;
   onQuantityChange: (activityId: string, quantity: string) => void;
+  isExpanded: boolean;
+  onToggle: () => void;
+  factorsByActivity: Record<string, EmissionFactor[]>;
 }
 
-export function CategorySection({
+export const CategorySection = ({
   label,
   activities,
   quantities,
   onQuantityChange,
-}: CategorySectionProps) {
+  isExpanded,
+  onToggle,
+  factorsByActivity,
+}: CategorySectionProps) => {
   const filledCount = activities.filter(
-    (a) => quantities[a.id] && Number(quantities[a.id]) > 0
+    (a) => quantities[a.id] && Number(quantities[a.id]) > 0,
   ).length;
 
   return (
-    <Accordion disableGutters>
+    <Accordion disableGutters expanded={isExpanded} onChange={onToggle}>
       <AccordionSummary expandIcon={<ExpandMoreIcon />}>
         <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
           <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
@@ -35,7 +41,8 @@ export function CategorySection({
           </Typography>
           {filledCount > 0 && (
             <Typography variant="body2" color="text.secondary">
-              ({filledCount} {filledCount === 1 ? "activity" : "activities"} filled)
+              ({filledCount} {filledCount === 1 ? "activity" : "activities"}{" "}
+              filled)
             </Typography>
           )}
         </Stack>
@@ -49,6 +56,7 @@ export function CategorySection({
               activity={activity}
               quantity={quantities[activity.id] ?? ""}
               onChange={(q) => onQuantityChange(activity.id, q)}
+              factors={factorsByActivity[activity.id] ?? []}
             />
           ))}
         </Stack>

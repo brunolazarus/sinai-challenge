@@ -1,18 +1,32 @@
-import type { Activity } from "@sinai/shared";
-import { Stack, TextField, Typography } from "@mui/material";
+import type { Activity, EmissionFactor } from "@sinai/shared";
+import { Stack, TextField, Tooltip, Typography } from "@mui/material";
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 
 interface ActivityInputProps {
   activity: Activity;
   quantity: string;
   onChange: (quantity: string) => void;
+  factors: EmissionFactor[];
 }
 
-export function ActivityInput({ activity, quantity, onChange }: ActivityInputProps) {
+export const ActivityInput = ({ activity, quantity, onChange, factors }: ActivityInputProps) => {
+  const methodology = factors[0]?.methodology;
+
   return (
     <Stack direction="row" spacing={2} sx={{ alignItems: "center" }}>
-      <Typography variant="body2" sx={{ minWidth: 180, fontWeight: 500 }}>
-        {activity.label}
-      </Typography>
+      <Stack direction="row" spacing={0.5} sx={{ alignItems: "center", minWidth: 180 }}>
+        <Typography variant="body2" sx={{ fontWeight: 500 }}>
+          {activity.label}
+        </Typography>
+        {methodology && (
+          <Tooltip title={methodology} arrow placement="top">
+            <InfoOutlinedIcon
+              fontSize="inherit"
+              sx={{ color: "text.disabled", cursor: "help", fontSize: 14 }}
+            />
+          </Tooltip>
+        )}
+      </Stack>
       <TextField
         size="small"
         type="number"

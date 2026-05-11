@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import type { Activity, EmissionCategory } from "@sinai/shared";
 import { EMISSION_CATEGORIES } from "@sinai/shared";
@@ -5,9 +6,9 @@ import { api } from "../lib/api";
 
 export type ActivitiesByCategory = Record<EmissionCategory, Activity[]>;
 
-export function groupActivitiesByCategory(data: {
+export const groupActivitiesByCategory = (data: {
   activities: Activity[];
-}): ActivitiesByCategory {
+}): ActivitiesByCategory => {
   return data.activities.reduce<ActivitiesByCategory>(
     (acc, activity) => {
       if (acc[activity.category]) {
@@ -22,13 +23,25 @@ export function groupActivitiesByCategory(data: {
       [EMISSION_CATEGORIES.WASTE]: [],
     },
   );
-}
+};
 
-export function useActivities() {
-  return useQuery({
+export const useActivities = () =>
+  useQuery({
     queryKey: ["activities"],
     queryFn: () => api.activities(),
-    select: groupActivitiesByCategory,
     staleTime: Infinity,
   });
-}
+
+export const useActivitiesByCategory = () => {
+  const { data, isLoading } = useActivities();
+  const [selectedCategory, setSelectedCategory] =
+    useState<EmissionCategory | null>(EMISSION_CATEGORIES.TRANSPORTATION);
+
+  const activitiesByCategory = data ? groupActivitiesByCategory(data) : null;
+
+  const toggleCategory = (category: EmissionCategory) => {
+    setSelectedCategory((prev) => (prev === category ? null : category));
+  };
+
+  return { activitiesByCategory, selectedCategory, toggleCategory, isLoading };
+};

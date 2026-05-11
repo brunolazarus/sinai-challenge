@@ -1,4 +1,4 @@
-import { createTheme, CssBaseline, ThemeProvider } from "@mui/material";
+import { createTheme, CssBaseline, GlobalStyles, ThemeProvider } from "@mui/material";
 import { FootprintCalculator } from "./components/FootprintCalculator";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 
@@ -9,13 +9,14 @@ const theme = createTheme({
   },
 });
 
-export default function App() {
-  return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <ErrorBoundary>
-        <FootprintCalculator />
-      </ErrorBoundary>
-    </ThemeProvider>
-  );
-}
+const App = () => (
+  <ThemeProvider theme={theme}>
+    <CssBaseline />
+    <GlobalStyles styles={{ html: { scrollbarGutter: "stable" } }} />
+    <ErrorBoundary>
+      <FootprintCalculator />
+    </ErrorBoundary>
+  </ThemeProvider>
+);
+
+export default App;

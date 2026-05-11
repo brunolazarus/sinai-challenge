@@ -139,7 +139,7 @@ export const ACTIVITIES: Activity[] = [
   },
   {
     id: "beef_weekly",
-    label: "Beef (weekly consumption → annual)",
+    label: "Beef (weekly consumption)",
     category: EMISSION_CATEGORIES.DIET,
     inputUnit: INPUT_UNITS.KG_PER_WEEK,
     transformation: TRANSFORMATION_IDS.WEEKLY_TO_YEARLY,

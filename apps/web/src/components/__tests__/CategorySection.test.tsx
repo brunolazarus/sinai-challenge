@@ -25,12 +25,12 @@ const activities: Activity[] = [
   },
 ];
 
-function renderSection(
+const renderSection = (
   quantities: Record<string, string> = {},
   onQuantityChange = vi.fn(),
   isExpanded = false,
   onToggle = vi.fn(),
-) {
+) => {
   return render(
     <CategorySection
       label="Transportation"

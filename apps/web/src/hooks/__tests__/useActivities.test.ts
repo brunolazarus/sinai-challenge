@@ -3,7 +3,7 @@ import { EMISSION_CATEGORIES } from "@sinai/shared";
 import type { Activity } from "@sinai/shared";
 import { groupActivitiesByCategory } from "../useActivities";
 
-function makeActivity(id: string, category: Activity["category"]): Activity {
+const makeActivity = (id: string, category: Activity["category"]): Activity => {
   return {
     id,
     label: id,

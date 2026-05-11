@@ -1,21 +1,30 @@
-import type { Activity, EmissionFactor } from "@sinai/shared";
+import type { Activity } from "@sinai/shared";
 import { Stack, TextField, Tooltip, Typography } from "@mui/material";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+import { useFactors } from "../hooks/useFactors";
 
 interface ActivityInputProps {
   activity: Activity;
   quantity: string;
   onChange: (quantity: string) => void;
-  factors: EmissionFactor[];
 }
 
-export const ActivityInput = ({ activity, quantity, onChange, factors }: ActivityInputProps) => {
+export const ActivityInput = ({
+  activity,
+  quantity,
+  onChange,
+}: ActivityInputProps) => {
+  const factorsByActivity = useFactors();
+  const factors = factorsByActivity[activity.id] ?? [];
   const methodology = factors[0]?.methodology;
-
   return (
-    <Stack direction="row" spacing={2} sx={{ alignItems: "center" }}>
-      <Stack direction="row" spacing={0.5} sx={{ alignItems: "center", minWidth: 180 }}>
-        <Typography variant="body2" sx={{ fontWeight: 500 }}>
+    <Stack direction="row" spacing={2} sx={{ alignItems: "flex-start" }}>
+      <Stack
+        direction="row"
+        spacing={0.8}
+        sx={{ alignItems: "flex-start", width: 200, flexShrink: 0 }}
+      >
+        <Typography variant="body2" sx={{ fontWeight: 500, lineHeight: 1.4 }}>
           {activity.label}
         </Typography>
         {methodology && (
@@ -41,4 +50,4 @@ export const ActivityInput = ({ activity, quantity, onChange, factors }: Activit
       </Typography>
     </Stack>
   );
-}
+};

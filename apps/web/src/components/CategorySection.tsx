@@ -1,4 +1,4 @@
-import type { Activity, EmissionFactor } from "@sinai/shared";
+import type { EmissionCategory } from "@sinai/shared";
 import {
   Accordion,
   AccordionDetails,
@@ -7,30 +7,30 @@ import {
   Typography,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import { useActivitiesForCategory } from "../hooks/useActivities";
 import { ActivityInput } from "./ActivityInput";
 
 interface CategorySectionProps {
-  label: string;
-  activities: Activity[];
+  categoryId: EmissionCategory;
   quantities: Record<string, string>;
   onQuantityChange: (activityId: string, quantity: string) => void;
   isExpanded: boolean;
   onToggle: () => void;
-  factorsByActivity: Record<string, EmissionFactor[]>;
 }
 
 export const CategorySection = ({
-  label,
-  activities,
+  categoryId,
   quantities,
   onQuantityChange,
   isExpanded,
   onToggle,
-  factorsByActivity,
 }: CategorySectionProps) => {
+  const activities = useActivitiesForCategory(categoryId);
   const filledCount = activities.filter(
     (a) => quantities[a.id] && Number(quantities[a.id]) > 0,
   ).length;
+
+  const label = `${categoryId.charAt(0).toUpperCase() + categoryId.slice(1)}`;
 
   return (
     <Accordion disableGutters expanded={isExpanded} onChange={onToggle}>
@@ -56,11 +56,10 @@ export const CategorySection = ({
               activity={activity}
               quantity={quantities[activity.id] ?? ""}
               onChange={(q) => onQuantityChange(activity.id, q)}
-              factors={factorsByActivity[activity.id] ?? []}
             />
           ))}
         </Stack>
       </AccordionDetails>
     </Accordion>
   );
-}
+};

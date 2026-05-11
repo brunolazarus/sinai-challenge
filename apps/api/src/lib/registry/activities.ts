@@ -51,7 +51,7 @@ export const ACTIVITIES: Activity[] = [
   },
   {
     id: "gasoline_car_daily",
-    label: "Gasoline Car (daily miles → annual)",
+    label: "Gasoline Car (daily miles)",
     category: EMISSION_CATEGORIES.TRANSPORTATION,
     inputUnit: INPUT_UNITS.MILE_PER_DAY,
     transformation: TRANSFORMATION_IDS.ANNUALIZED,

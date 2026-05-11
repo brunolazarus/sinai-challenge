@@ -1,6 +1,7 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   type Activity,
   TRANSFORMATION_IDS,
@@ -25,24 +26,33 @@ const activities: Activity[] = [
   },
 ];
 
+const createWrapper = () => {
+  const queryClient = new QueryClient({
+    defaultOptions: { queries: { retry: false } },
+  });
+  queryClient.setQueryData(["activities"], { activities });
+  queryClient.setQueryData(["factors"], { factors: [] });
+  return ({ children }: { children: React.ReactNode }) => (
+    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+  );
+};
+
 const renderSection = (
   quantities: Record<string, string> = {},
   onQuantityChange = vi.fn(),
   isExpanded = false,
   onToggle = vi.fn(),
-) => {
-  return render(
+) =>
+  render(
     <CategorySection
-      label="Transportation"
-      activities={activities}
+      categoryId={EMISSION_CATEGORIES.TRANSPORTATION}
       quantities={quantities}
       onQuantityChange={onQuantityChange}
       isExpanded={isExpanded}
       onToggle={onToggle}
-      factorsByActivity={{}}
     />,
+    { wrapper: createWrapper() },
   );
-}
 
 describe("CategorySection", () => {
   it("renders the category label", () => {

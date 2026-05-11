@@ -1,5 +1,4 @@
-import { useState, useMemo } from "react";
-import type { CalculationInput, EmissionCategory } from "@sinai/shared";
+import type { EmissionCategory } from "@sinai/shared";
 import { EMISSION_CATEGORIES } from "@sinai/shared";
 import {
   Box,
@@ -12,9 +11,8 @@ import {
 import CalculateIcon from "@mui/icons-material/Calculate";
 import { useActivitiesByCategory } from "../hooks/useActivities";
 import { useCalculate } from "../hooks/useCalculate";
-import { useFactors } from "../hooks/useFactors";
-
 import { CategorySection } from "./CategorySection";
+import { ErrorBoundary } from "./ErrorBoundary";
 import { ResultsPanel } from "./ResultsPanel";
 
 const ORDERED_CATEGORIES = Object.values(
@@ -22,27 +20,21 @@ const ORDERED_CATEGORIES = Object.values(
 ) as EmissionCategory[];
 
 export const FootprintCalculator = () => {
-  const { activitiesByCategory, selectedCategory, toggleCategory, isLoading } =
-    useActivitiesByCategory();
-  const factorsByActivity = useFactors();
+  const {
+    selectedCategory,
+    toggleCategory,
+    isLoading,
+    handleQuantityChange,
+    quantities,
+    validInputs,
+  } = useActivitiesByCategory();
+
   const {
     mutate: calculate,
-    data: summary,
+    data: calculateSummary,
     isPending: calculating,
     error,
   } = useCalculate();
-
-  const [quantities, setQuantities] = useState<Record<string, string>>({});
-
-  const handleQuantityChange = (activityId: string, quantity: string) => {
-    setQuantities((prev) => ({ ...prev, [activityId]: quantity }));
-  };
-
-  const validInputs = useMemo<CalculationInput[]>(() => {
-    return Object.entries(quantities)
-      .filter(([, q]) => q !== "" && Number(q) > 0)
-      .map(([activityId, q]) => ({ activityId, quantity: Number(q) }));
-  }, [quantities]);
 
   const handleCalculate = () => {
     if (validInputs.length > 0) calculate(validInputs);
@@ -91,20 +83,23 @@ export const FootprintCalculator = () => {
 
       <Stack spacing={1} sx={{ mb: 4 }}>
         {ORDERED_CATEGORIES.map((id) => (
-          <CategorySection
-            key={id}
-            label={id.charAt(0).toUpperCase() + id.slice(1)}
-            activities={activitiesByCategory?.[id] ?? []}
-            quantities={quantities}
-            onQuantityChange={handleQuantityChange}
-            isExpanded={selectedCategory === id}
-            onToggle={() => toggleCategory(id)}
-            factorsByActivity={factorsByActivity}
-          />
+          <ErrorBoundary key={id}>
+            <CategorySection
+              categoryId={id}
+              quantities={quantities}
+              onQuantityChange={handleQuantityChange}
+              isExpanded={selectedCategory === id}
+              onToggle={() => toggleCategory(id)}
+            />
+          </ErrorBoundary>
         ))}
       </Stack>
 
-      {summary && <ResultsPanel summary={summary} />}
+      {calculateSummary && (
+        <ErrorBoundary>
+          <ResultsPanel summary={calculateSummary} />
+        </ErrorBoundary>
+      )}
     </Container>
   );
-}
+};

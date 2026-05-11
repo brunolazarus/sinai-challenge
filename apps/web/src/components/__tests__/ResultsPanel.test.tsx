@@ -1,7 +1,7 @@
 import { describe, it, expect, afterEach } from "vitest";
 import { render, screen, cleanup } from "@testing-library/react";
 import type { FootprintSummary } from "@sinai/shared";
-import { ResultsPanel } from "./ResultsPanel";
+import { ResultsPanel } from "../ResultsPanel";
 
 afterEach(cleanup);
 

@@ -6,7 +6,7 @@ import {
   TRANSFORMATION_IDS,
   EMISSION_CATEGORIES,
 } from "@sinai/shared";
-import { CategorySection } from "./CategorySection";
+import { CategorySection } from "../CategorySection";
 
 const activities: Activity[] = [
   {
@@ -28,6 +28,8 @@ const activities: Activity[] = [
 function renderSection(
   quantities: Record<string, string> = {},
   onQuantityChange = vi.fn(),
+  isExpanded = false,
+  onToggle = vi.fn(),
 ) {
   return render(
     <CategorySection
@@ -35,6 +37,9 @@ function renderSection(
       activities={activities}
       quantities={quantities}
       onQuantityChange={onQuantityChange}
+      isExpanded={isExpanded}
+      onToggle={onToggle}
+      factorsByActivity={{}}
     />,
   );
 }
@@ -65,28 +70,19 @@ describe("CategorySection", () => {
     expect(screen.queryByText(/filled/)).not.toBeInTheDocument();
   });
 
-  it("renders an input for each activity when expanded", async () => {
-    const user = userEvent.setup();
-    renderSection();
-
-    await user.click(screen.getByRole("button", { name: /Transportation/i }));
-
+  it("renders an input for each activity when expanded", () => {
+    renderSection({}, vi.fn(), true);
     expect(screen.getAllByRole("spinbutton")).toHaveLength(activities.length);
   });
 
   it("calls onQuantityChange with the correct activityId when input changes", async () => {
     const user = userEvent.setup();
     const onQuantityChange = vi.fn();
-    renderSection({}, onQuantityChange);
-
-    await user.click(screen.getByRole("button", { name: /Transportation/i }));
+    renderSection({}, onQuantityChange, true);
 
     const inputs = screen.getAllByRole("spinbutton");
     await user.type(inputs[0]!, "42");
 
-    expect(onQuantityChange).toHaveBeenCalledWith(
-      "gasoline_car",
-      expect.any(String),
-    );
+    expect(onQuantityChange).toHaveBeenCalledWith("gasoline_car", expect.any(String));
   });
 });

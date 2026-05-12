@@ -72,7 +72,7 @@ All factors are sourced from the **EPA GHG Emission Factors Hub (2023)** and **E
 ## Testing
 
 - Use Vitest for both frontend and backend tests.
-- Co-locate tests with source: `foo.ts` → `foo.test.ts`.
+- Backend tests are co-located with source (`foo.ts` → `foo.test.ts`). Frontend tests live in a sibling `__tests__/` folder next to the component or hook directory.
 - Every calculation function must have unit tests covering boundary values.
 - No mocking of core calculation logic — test with real emission factor values.
 

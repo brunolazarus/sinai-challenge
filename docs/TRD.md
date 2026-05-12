@@ -188,10 +188,10 @@ The frontend follows a **Model-View-Presenter (MVP)** pattern, mapping naturally
 | Layer | What it is | Responsibility |
 |-------|-----------|----------------|
 | **Model** | `lib/api.ts` + raw query/mutation hooks | Data fetching, caching, and mutation. No UI state. |
-| **Presenter** | Composed hooks (`useActivitiesByCategory`) | Mediates between Model and View: computes derived state, exposes event handlers, keeps components decoupled from fetch internals. |
+| **Presenter** | Collocated `use*Presenter` hooks | Mediates between Model and View: computes derived state, exposes event handlers, keeps components decoupled from fetch internals. |
 | **View** | React components | Renders what the Presenter provides. Thin — ideally no business logic. |
 
-`useActivitiesByCategory` is the primary Presenter: it composes `useActivities` (Model), owns `selectedCategory` and `quantities` UI state, and derives `validInputs` — `FootprintCalculator` consumes it without knowing anything about React Query or the API shape. `ResultsPanel` is a pure View receiving a `FootprintSummary` prop with no hooks of its own.
+Each component with non-trivial logic has a collocated Presenter hook (`useFootprintCalculatorPresenter`, `useCategorySectionPresenter`, `useActivityInputPresenter`). `useFootprintCalculatorPresenter` is the primary orchestrator: it composes Model hooks, owns `selectedCategory` and `quantities` UI state, and derives `validInputs` — `FootprintCalculator` consumes it without knowing anything about React Query or the API shape. `ResultsPanel` is a pure View receiving a `FootprintSummary` prop with no hooks of its own.
 
 At the leaf level, `CategorySection` and `ActivityInput` call `useActivitiesForCategory` and `useFactors` directly rather than receiving all data as props. This is a deliberate pragmatic trade-off: it avoids prop drilling through `FootprintCalculator` and lets each section own its data independently, at the cost of a strict View/Presenter boundary at the component level.
 
@@ -203,7 +203,9 @@ At the leaf level, `CategorySection` and `ActivityInput` call `useActivitiesForC
 | `useActivitiesForCategory` | Model | Filters cached data for one category |
 | `useFactors` | Model | Fetches all factors, groups by activity ID |
 | `useCalculate` | Model | `useMutation` wrapper for `POST /v1/calculate` |
-| `useActivitiesByCategory` | Presenter | Composes Model hooks; owns accordion + quantity state; derives `validInputs` |
+| `useFootprintCalculatorPresenter` | Presenter | Composes Model hooks; owns accordion + quantity state; derives `validInputs`; exposes calculate action |
+| `useCategorySectionPresenter` | Presenter | Derives activities list, `filledCount`, and display `label` for a category |
+| `useActivityInputPresenter` | Presenter | Resolves `methodology` tooltip text for a given activity |
 
 Registry data is fetched once and cached indefinitely (`staleTime: Infinity`) — activities and factors are static at runtime.
 
@@ -256,7 +258,7 @@ Key heuristics:
 | Calculator unit tests | Vitest | Real factor values, boundary cases, all transformations |
 | API route integration | Vitest + `app.request()` | No test server, no mocks — Hono handles in-process |
 | Frontend components | Vitest + Testing Library + happy-dom | `QueryClientProvider` with seeded cache data |
-| Hook logic | Vitest | Pure function tests (e.g. `groupActivitiesByCategory`) |
+| Hook logic | Vitest | Tests live in a sibling `__tests__/` folder next to the hook |
 
 **Why happy-dom over jsdom:** `jsdom@29` depends on `html-encoding-sniffer@6`, which is ESM-only and cannot be `require()`d. `happy-dom` has no such conflict and is faster.
 

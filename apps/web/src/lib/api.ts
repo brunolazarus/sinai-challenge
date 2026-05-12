@@ -8,16 +8,18 @@ import type {
   FootprintSummary,
 } from "@sinai/shared";
 
+const BASE_URL = import.meta.env.VITE_API_URL ?? "http://localhost:4000";
+
 // ── Primitives ────────────────────────────────────────────────────────────────
 
 async function get<T>(path: string): Promise<T> {
-  const res = await fetch(path);
+  const res = await fetch(`${BASE_URL}${path}`);
   if (!res.ok) throw new Error(`API error ${res.status}: ${res.statusText}`);
   return res.json() as Promise<T>;
 }
 
 async function post<T>(path: string, body: unknown): Promise<T> {
-  const res = await fetch(path, {
+  const res = await fetch(`${BASE_URL}${path}`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),
@@ -29,16 +31,19 @@ async function post<T>(path: string, body: unknown): Promise<T> {
 // ── Registry ──────────────────────────────────────────────────────────────────
 
 export const api = {
-  categories: (): Promise<{ categories: Category[] }> =>
-    get("/v1/categories"),
+  categories: (): Promise<{ categories: Category[] }> => get("/v1/categories"),
 
-  activities: (category?: EmissionCategory): Promise<{ activities: Activity[] }> =>
+  activities: (
+    category?: EmissionCategory,
+  ): Promise<{ activities: Activity[] }> =>
     get(category ? `/v1/activities?category=${category}` : "/v1/activities"),
 
   transformations: (): Promise<{ transformations: Transformation[] }> =>
     get("/v1/transformations"),
 
-  factors: (category?: EmissionCategory): Promise<{ factors: EmissionFactor[] }> =>
+  factors: (
+    category?: EmissionCategory,
+  ): Promise<{ factors: EmissionFactor[] }> =>
     get(category ? `/v1/factors?category=${category}` : "/v1/factors"),
 
   // ── Calculation ─────────────────────────────────────────────────────────────

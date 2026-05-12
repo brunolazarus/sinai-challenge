@@ -42,6 +42,13 @@ pnpm install   # install all workspace dependencies
 pnpm dev       # start frontend (port 3000) and API (port 4000) concurrently
 ```
 
+The frontend calls the API at `http://localhost:4000` by default. To point it elsewhere, copy the example env file and set the variable before running:
+
+```bash
+cp apps/web/.env.example apps/web/.env
+# edit VITE_API_URL=https://api.yourdomain.com
+```
+
 | Service | URL |
 |---------|-----|
 | Frontend | http://localhost:3000 |

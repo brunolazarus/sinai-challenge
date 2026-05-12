@@ -1,6 +1,20 @@
 # Carbon Footprint Calculator
 
-A full-stack personal carbon footprint calculator. Enter quantities for the activities you perform — miles driven, meals eaten, energy used — and get an annual CO₂e estimate broken down by activity with full calculation provenance.
+## TL;DR
+
+Full-stack personal carbon footprint calculator. Enter annual quantities across transportation, energy, diet, and waste — get a CO₂e breakdown with full calculation provenance sourced from EPA data.
+
+```bash
+pnpm install && pnpm dev
+# frontend → http://localhost:3000
+# API + Swagger UI → http://localhost:4000/docs
+```
+
+- **Want to understand the architecture?** Read [`docs/TRD.md`](docs/TRD.md)
+- **Want to add an activity or category?** Jump to [Registry Guide](#registry-guide) below
+- **All amounts are annual totals** (e.g. miles driven per year, kg of beef per year)
+
+---
 
 ## Stack
 
@@ -12,11 +26,20 @@ A full-stack personal carbon footprint calculator. Enter quantities for the acti
 | Shared | TypeScript types and constants (`@sinai/shared`) |
 | Tests | Vitest + Testing Library + happy-dom |
 
+## Prerequisites
+
+| Tool | Version | Install |
+|------|---------|---------|
+| Node.js | 20 (see `.nvmrc`) | [nodejs.org](https://nodejs.org) or `nvm use` |
+| pnpm | 9 | `npm install -g pnpm@9` |
+
+> **Using nvm?** Run `nvm use` in the repo root — it will pick up the `.nvmrc` automatically.
+
 ## Getting Started
 
 ```bash
-pnpm install
-pnpm dev
+pnpm install   # install all workspace dependencies
+pnpm dev       # start frontend (port 3000) and API (port 4000) concurrently
 ```
 
 | Service | URL |
@@ -50,7 +73,7 @@ docs/
   ai-features.md          # Planned AI feature roadmap
 ```
 
-The frontend is structured around a **Model-View-Presenter** pattern. Raw data-fetching hooks (`useActivities`, `useFactors`, `useCalculate`) form the Model layer. A composed Presenter hook — `useActivitiesByCategory` — owns UI state and derives the exact values each component needs. React components are the View: they receive props or call hooks, render output, and contain no calculation logic. This keeps the data layer swappable and components straightforward to test in isolation.
+The frontend is structured around a **Model-View-Presenter** pattern. Raw data-fetching hooks (`useActivities`, `useFactors`, `useCalculate`) form the Model layer. Each component folder owns a collocated Presenter hook (e.g. `useActivityInputPresenter`, `useCategorySectionPresenter`) that owns UI state and derives the exact values the component needs. React components are the View: they receive props or call hooks, render output, and contain no calculation logic. This keeps the data layer swappable and components straightforward to test in isolation.
 
 ## API Endpoints
 
@@ -196,19 +219,7 @@ Adding the key here automatically updates the `EmissionCategory` union type and 
 },
 ```
 
-**5. `apps/web/src/hooks/useActivities.ts`** — add the new category bucket to `groupActivitiesByCategory`
-
-```ts
-{
-  [EMISSION_CATEGORIES.TRANSPORTATION]: [],
-  [EMISSION_CATEGORIES.ENERGY]: [],
-  [EMISSION_CATEGORIES.DIET]: [],
-  [EMISSION_CATEGORIES.WASTE]: [],
-  [EMISSION_CATEGORIES.SHOPPING]: [],   // ← add here
-}
-```
-
-The API route validation, OpenAPI spec, and frontend accordion list all pick up the new category automatically from step 1.
+The API route validation, OpenAPI spec, and frontend accordion list all pick up the new category automatically from step 1. No frontend changes needed for a new category.
 
 ---
 

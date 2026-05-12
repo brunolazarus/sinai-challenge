@@ -3,6 +3,7 @@ import type { CalculationInput, EmissionCategory } from "@sinai/shared";
 import { EMISSION_CATEGORIES } from "@sinai/shared";
 import { useActivities } from "../../hooks/useActivities";
 import { useCalculate } from "../../hooks/useCalculate";
+import { useDebounce } from "../../hooks/useDebounce";
 
 export const useFootprintCalculatorPresenter = () => {
   const { isLoading } = useActivities();
@@ -12,6 +13,7 @@ export const useFootprintCalculatorPresenter = () => {
   const [quantities, setQuantities] = useState<Record<string, string>>({});
 
   const { mutate: calculate, data: summary, isPending: calculating, error } = useCalculate();
+  const showSpinner = useDebounce(calculating, 300);
 
   const toggleCategory = (category: EmissionCategory) => {
     setSelectedCategory((prev) => (prev === category ? null : category));
@@ -41,6 +43,7 @@ export const useFootprintCalculatorPresenter = () => {
     handleCalculate,
     summary,
     calculating,
+    showSpinner,
     error,
   };
 };

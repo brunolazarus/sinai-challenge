@@ -59,7 +59,7 @@ export const ResultsPanel = ({ summary }: ResultsPanelProps) => {
               return (
                 <Box
                   key={i}
-                  sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}
+                  sx={{ display: "flex", justifyContent: "space-between", alignItems: { xs: "flex-start", sm: "center" }, gap: 1 }}
                 >
                   <Stack spacing={0.25}>
                     <Typography
@@ -90,7 +90,7 @@ export const ResultsPanel = ({ summary }: ResultsPanelProps) => {
 
                   <Typography
                     variant="body2"
-                    sx={{ fontWeight: 600, whiteSpace: "nowrap", ml: 2 }}
+                    sx={{ fontWeight: 600, whiteSpace: "nowrap", flexShrink: 0 }}
                   >
                     {result.result.kgCO2e.toFixed(2)} kg
                   </Typography>

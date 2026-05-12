@@ -32,11 +32,15 @@ export const ActivityInput = ({
   } = useActivityInputPresenter(activity, quantity, onChange);
 
   return (
-    <Stack direction="row" spacing={2} sx={{ alignItems: "center" }}>
+    <Stack
+      direction={{ xs: "column", sm: "row" }}
+      spacing={1}
+      sx={{ alignItems: { xs: "flex-start", sm: "center" } }}
+    >
       <Stack
         direction="row"
         spacing={0.8}
-        sx={{ alignItems: "flex-start", width: 200, flexShrink: 0 }}
+        sx={{ alignItems: "flex-start", width: { sm: 200 }, flexShrink: 0 }}
       >
         <Typography variant="body2" sx={{ fontWeight: 500, lineHeight: 1.4 }}>
           {activity.label}
@@ -50,36 +54,38 @@ export const ActivityInput = ({
           </Tooltip>
         )}
       </Stack>
-      <TextField
-        size="small"
-        type="number"
-        label="Amount"
-        value={displayValue}
-        onChange={(e) => {
-          setDisplayValue(e.target.value);
-          onChange(toBase(e.target.value));
-        }}
-        slotProps={{ htmlInput: { min: 0, step: "any" } }}
-        sx={{ width: 140 }}
-      />
-      {unitOptions ? (
-        <Select
+      <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
+        <TextField
           size="small"
-          value={selectedUnitIdx}
-          onChange={(e) => switchUnit(Number(e.target.value))}
-          sx={{ minWidth: 90 }}
-        >
-          {unitOptions.map((opt, idx) => (
-            <MenuItem key={opt.label} value={idx}>
-              {opt.label}
-            </MenuItem>
-          ))}
-        </Select>
-      ) : (
-        <Typography variant="body2" color="text.secondary" sx={{ minWidth: 60 }}>
-          {activity.inputUnit}
-        </Typography>
-      )}
+          type="number"
+          label="Amount"
+          value={displayValue}
+          onChange={(e) => {
+            setDisplayValue(e.target.value);
+            onChange(toBase(e.target.value));
+          }}
+          slotProps={{ htmlInput: { min: 0, step: "any" } }}
+          sx={{ width: { xs: 120, sm: 140 } }}
+        />
+        {unitOptions ? (
+          <Select
+            size="small"
+            value={selectedUnitIdx}
+            onChange={(e) => switchUnit(Number(e.target.value))}
+            sx={{ minWidth: 90 }}
+          >
+            {unitOptions.map((opt, idx) => (
+              <MenuItem key={opt.label} value={idx}>
+                {opt.label}
+              </MenuItem>
+            ))}
+          </Select>
+        ) : (
+          <Typography variant="body2" color="text.secondary" sx={{ minWidth: 60 }}>
+            {activity.inputUnit}
+          </Typography>
+        )}
+      </Stack>
     </Stack>
   );
 };

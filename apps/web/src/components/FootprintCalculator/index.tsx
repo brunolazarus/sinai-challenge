@@ -14,7 +14,9 @@ import { ErrorBoundary } from "../ErrorBoundary";
 import { ResultsPanel } from "../ResultsPanel";
 import { useFootprintCalculatorPresenter } from "./useFootprintCalculatorPresenter";
 
-const ORDERED_CATEGORIES = Object.values(EMISSION_CATEGORIES) as EmissionCategory[];
+const ORDERED_CATEGORIES = Object.values(
+  EMISSION_CATEGORIES,
+) as EmissionCategory[];
 
 export const FootprintCalculator = () => {
   const {
@@ -26,7 +28,7 @@ export const FootprintCalculator = () => {
     validInputs,
     handleCalculate,
     summary,
-    calculating,
+    showSpinner,
     error,
   } = useFootprintCalculatorPresenter();
 
@@ -45,7 +47,8 @@ export const FootprintCalculator = () => {
       </Typography>
       <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
         Enter amounts for the activities that apply to you, then calculate your
-        estimated carbon footprint. All amounts are <strong>annual totals</strong>.
+        estimated carbon footprint. All amounts are{" "}
+        <strong>annual totals</strong>.
       </Typography>
 
       {error && (
@@ -54,22 +57,18 @@ export const FootprintCalculator = () => {
         </Typography>
       )}
 
-      <Button
-        variant="contained"
-        size="large"
-        startIcon={
-          calculating ? (
-            <CircularProgress size={18} color="inherit" />
-          ) : (
-            <CalculateIcon />
-          )
-        }
-        disabled={validInputs.length === 0 || calculating}
-        onClick={handleCalculate}
-        sx={{ mb: 4 }}
-      >
-        {calculating ? "Calculating…" : "Calculate Footprint"}
-      </Button>
+      <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 4 }}>
+        <Button
+          variant="contained"
+          size="large"
+          startIcon={<CalculateIcon />}
+          disabled={validInputs.length === 0 || showSpinner}
+          onClick={handleCalculate}
+        >
+          Calculate Footprint
+        </Button>
+        {showSpinner && <CircularProgress size={20} />}
+      </Box>
 
       <Stack spacing={1} sx={{ mb: 4 }}>
         {ORDERED_CATEGORIES.map((id) => (

@@ -39,9 +39,10 @@ const createWrapper = () => {
     defaultOptions: { queries: { retry: false } },
   });
   queryClient.setQueryData(["factors"], { factors });
-  return ({ children }: { children: React.ReactNode }) => (
+  const Wrapper = ({ children }: { children: React.ReactNode }) => (
     <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
   );
+  return Wrapper;
 };
 
 describe("useActivityInputPresenter", () => {

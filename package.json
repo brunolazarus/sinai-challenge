@@ -7,6 +7,8 @@
     "dev": "turbo dev",
     "lint": "turbo lint",
     "test": "turbo test",
+    "test:web": "pnpm --filter @sinai/web exec vitest run",
+    "test:api": "pnpm --filter @sinai/api exec vitest run",
     "type-check": "turbo type-check",
     "clean": "turbo clean && rm -rf node_modules",
     "stop": "lsof -ti :3000 -ti :4000 | xargs kill -9 2>/dev/null || true",

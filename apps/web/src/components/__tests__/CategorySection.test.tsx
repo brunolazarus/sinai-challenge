@@ -32,9 +32,12 @@ const createWrapper = () => {
   });
   queryClient.setQueryData(["activities"], { activities });
   queryClient.setQueryData(["factors"], { factors: [] });
-  return ({ children }: { children: React.ReactNode }) => (
+
+  const Wrapper = ({ children }: { children: React.ReactNode }) => (
     <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
   );
+
+  return Wrapper;
 };
 
 const renderSection = (
@@ -93,6 +96,9 @@ describe("CategorySection", () => {
     const inputs = screen.getAllByRole("spinbutton");
     await user.type(inputs[0]!, "42");
 
-    expect(onQuantityChange).toHaveBeenCalledWith("gasoline_car", expect.any(String));
+    expect(onQuantityChange).toHaveBeenCalledWith(
+      "gasoline_car",
+      expect.any(String),
+    );
   });
 });

@@ -25,9 +25,10 @@ const createWrapper = () => {
     defaultOptions: { queries: { retry: false } },
   });
   queryClient.setQueryData(["factors"], { factors });
-  return ({ children }: { children: ReactNode }) => (
+  const Wrapper = ({ children }: { children: ReactNode }) => (
     <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
   );
+  return Wrapper;
 };
 
 const summary: FootprintSummary = {

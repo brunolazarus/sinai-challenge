@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { calculateSingle, calculateFootprint } from "./calculator.js";
+import { TRANSFORMATIONS } from "./registry/index.js";
 
 describe("calculateSingle", () => {
   it("calculates gasoline car emissions", () => {
@@ -57,24 +58,20 @@ describe("calculateSingle", () => {
   });
 
   it("weekly_to_yearly: weekly kg × 52 × factor", () => {
-    // 1 kg/week beef × 52 × 27.0 kg/kg = 1404 kg CO2e/year
-    const result = calculateSingle({ activityId: "beef_weekly", quantity: 1 });
-    expect(result.result.kgCO2e).toBeCloseTo(1 * 52 * 27.0, 0);
-    expect(result.inputUnit).toBe("kg/week");
+    const t = TRANSFORMATIONS.find((t) => t.id === "weekly_to_yearly")!;
+    expect(t.apply(1, 27.0)).toBeCloseTo(1 * 52 * 27.0, 0);
   });
 
-  it("input_km: converts km to miles before applying factor", () => {
-    // 100 km ÷ 1.60934 mi/km × 0.404 kg/mi ≈ 25.1 kg CO2e
-    const result = calculateSingle({ activityId: "gasoline_car_km", quantity: 100 });
-    expect(result.result.kgCO2e).toBeCloseTo((100 / 1.60934) * 0.404, 1);
-    expect(result.inputUnit).toBe("km");
+it("input_km: apply converts km to miles before multiplying by factor", () => {
+    // 100 km ÷ 1.60934 × 0.404 kg/mi ≈ 25.1 kg CO2e
+    const t = TRANSFORMATIONS.find((t) => t.id === "input_km")!;
+    expect(t.apply(100, 0.404)).toBeCloseTo((100 / 1.60934) * 0.404, 1);
   });
 
-  it("input_lbs: converts pounds to kg before applying factor", () => {
-    // 10 lb ÷ 2.20462 kg/lb × 27.0 kg CO2e/kg ≈ 122.5 kg CO2e
-    const result = calculateSingle({ activityId: "beef_lbs", quantity: 10 });
-    expect(result.result.kgCO2e).toBeCloseTo((10 / 2.20462) * 27.0, 1);
-    expect(result.inputUnit).toBe("lb");
+  it("input_lbs: apply converts pounds to kg before multiplying by factor", () => {
+    // 10 lb ÷ 2.20462 × 27.0 kg CO2e/kg ≈ 122.5 kg CO2e
+    const t = TRANSFORMATIONS.find((t) => t.id === "input_lbs")!;
+    expect(t.apply(10, 27.0)).toBeCloseTo((10 / 2.20462) * 27.0, 1);
   });
 });
 

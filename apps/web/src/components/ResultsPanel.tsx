@@ -5,14 +5,18 @@ import {
   CardContent,
   Divider,
   Stack,
+  Tooltip,
   Typography,
 } from "@mui/material";
+import { useFactors } from "../hooks/useFactors";
 
 interface ResultsPanelProps {
   summary: FootprintSummary;
 }
 
 export const ResultsPanel = ({ summary }: ResultsPanelProps) => {
+  const factorsByActivity = useFactors();
+
   return (
     <Stack spacing={2}>
       <Card
@@ -40,34 +44,55 @@ export const ResultsPanel = ({ summary }: ResultsPanelProps) => {
             Breakdown
           </Typography>
           <Stack divider={<Divider flexItem />} spacing={1.5}>
-            {summary.results.map((result, i) => (
-              <Box
-                key={i}
-                sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}
-              >
-                <Stack spacing={0.25}>
+            {summary.results.map((result, i) => {
+              const methodology = factorsByActivity[result.activity]
+                ?.find((f) => f.id === result.factor)
+                ?.methodology;
+
+              return (
+                <Box
+                  key={i}
+                  sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}
+                >
+                  <Stack spacing={0.25}>
+                    <Typography
+                      variant="body2"
+                      sx={{ fontWeight: 500, textTransform: "capitalize" }}
+                    >
+                      {result.activity.replace(/_/g, " ")}
+                    </Typography>
+                    <Stack direction="row" spacing={0.5} sx={{ alignItems: "center" }}>
+                      <Typography variant="caption" color="text.secondary">
+                        {result.input.toFixed(2)} {result.inputUnit} ·
+                      </Typography>
+                      <Tooltip
+                        title={methodology ?? result.factor}
+                        arrow
+                        placement="top"
+                      >
+                        <Typography
+                          variant="caption"
+                          color="text.secondary"
+                          sx={{ cursor: "help", textDecoration: "underline dotted" }}
+                        >
+                          {result.factor}
+                        </Typography>
+                      </Tooltip>
+                    </Stack>
+                  </Stack>
+
                   <Typography
                     variant="body2"
-                    sx={{ fontWeight: 500, textTransform: "capitalize" }}
+                    sx={{ fontWeight: 600, whiteSpace: "nowrap", ml: 2 }}
                   >
-                    {result.activity.replace(/_/g, " ")}
+                    {result.result.kgCO2e.toFixed(2)} kg
                   </Typography>
-                  <Typography variant="caption" color="text.secondary">
-                    {result.input} {result.inputUnit} · {result.factor}
-                  </Typography>
-                </Stack>
-
-                <Typography
-                  variant="body2"
-                  sx={{ fontWeight: 600, whiteSpace: "nowrap", ml: 2 }}
-                >
-                  {result.result.kgCO2e.toFixed(2)} kg
-                </Typography>
-              </Box>
-            ))}
+                </Box>
+              );
+            })}
           </Stack>
         </CardContent>
       </Card>
     </Stack>
   );
-}
+};

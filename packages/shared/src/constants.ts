@@ -24,6 +24,7 @@ export const INPUT_UNITS = {
   KM: "km",
   PASSENGER_MILE: "passenger-mile",
   MILE_PER_DAY: "mile/day",
+  FLIGHT_PER_YEAR: "flight/year",
   // energy
   KWH: "kWh",
   THERM: "therm",

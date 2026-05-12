@@ -32,14 +32,14 @@ export const ACTIVITIES: Activity[] = [
     id: "short_haul_flight",
     label: "Short-Haul Flight (< 500 mi)",
     category: EMISSION_CATEGORIES.TRANSPORTATION,
-    inputUnit: INPUT_UNITS.PASSENGER_MILE,
+    inputUnit: INPUT_UNITS.FLIGHT_PER_YEAR,
     transformation: TRANSFORMATION_IDS.SIMPLE_MULTIPLY,
   },
   {
     id: "long_haul_flight",
     label: "Long-Haul Flight (> 500 mi)",
     category: EMISSION_CATEGORIES.TRANSPORTATION,
-    inputUnit: INPUT_UNITS.PASSENGER_MILE,
+    inputUnit: INPUT_UNITS.FLIGHT_PER_YEAR,
     transformation: TRANSFORMATION_IDS.SIMPLE_MULTIPLY,
   },
   {
@@ -62,13 +62,6 @@ export const ACTIVITIES: Activity[] = [
     category: EMISSION_CATEGORIES.TRANSPORTATION,
     inputUnit: INPUT_UNITS.MILE_PER_DAY,
     transformation: TRANSFORMATION_IDS.ANNUALIZED,
-  },
-  {
-    id: "gasoline_car_km",
-    label: "Gasoline Car (km)",
-    category: EMISSION_CATEGORIES.TRANSPORTATION,
-    inputUnit: INPUT_UNITS.KM,
-    transformation: TRANSFORMATION_IDS.INPUT_KM,
   },
 
   // ── Energy ────────────────────────────────────────────────────────────────
@@ -143,20 +136,6 @@ export const ACTIVITIES: Activity[] = [
     category: EMISSION_CATEGORIES.DIET,
     inputUnit: INPUT_UNITS.KG,
     transformation: TRANSFORMATION_IDS.SIMPLE_MULTIPLY,
-  },
-  {
-    id: "beef_weekly",
-    label: "Beef (weekly consumption)",
-    category: EMISSION_CATEGORIES.DIET,
-    inputUnit: INPUT_UNITS.KG_PER_WEEK,
-    transformation: TRANSFORMATION_IDS.WEEKLY_TO_YEARLY,
-  },
-  {
-    id: "beef_lbs",
-    label: "Beef (pounds)",
-    category: EMISSION_CATEGORIES.DIET,
-    inputUnit: INPUT_UNITS.LB,
-    transformation: TRANSFORMATION_IDS.INPUT_LBS,
   },
 
   // ── Waste ─────────────────────────────────────────────────────────────────

@@ -1,5 +1,12 @@
 import type { Activity } from "@sinai/shared";
-import { Stack, TextField, Tooltip, Typography } from "@mui/material";
+import {
+  MenuItem,
+  Select,
+  Stack,
+  TextField,
+  Tooltip,
+  Typography,
+} from "@mui/material";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import { useActivityInputPresenter } from "./useActivityInputPresenter";
 
@@ -14,9 +21,18 @@ export const ActivityInput = ({
   quantity,
   onChange,
 }: ActivityInputProps) => {
-  const { methodology } = useActivityInputPresenter(activity.id);
+  const {
+    methodology,
+    unitOptions,
+    selectedUnitIdx,
+    displayValue,
+    setDisplayValue,
+    toBase,
+    switchUnit,
+  } = useActivityInputPresenter(activity, quantity, onChange);
+
   return (
-    <Stack direction="row" spacing={2} sx={{ alignItems: "flex-start" }}>
+    <Stack direction="row" spacing={2} sx={{ alignItems: "center" }}>
       <Stack
         direction="row"
         spacing={0.8}
@@ -38,14 +54,32 @@ export const ActivityInput = ({
         size="small"
         type="number"
         label="Amount"
-        value={quantity}
-        onChange={(e) => onChange(e.target.value)}
+        value={displayValue}
+        onChange={(e) => {
+          setDisplayValue(e.target.value);
+          onChange(toBase(e.target.value));
+        }}
         slotProps={{ htmlInput: { min: 0, step: "any" } }}
         sx={{ width: 140 }}
       />
-      <Typography variant="body2" color="text.secondary" sx={{ minWidth: 60 }}>
-        {activity.inputUnit}
-      </Typography>
+      {unitOptions ? (
+        <Select
+          size="small"
+          value={selectedUnitIdx}
+          onChange={(e) => switchUnit(Number(e.target.value))}
+          sx={{ minWidth: 90 }}
+        >
+          {unitOptions.map((opt, idx) => (
+            <MenuItem key={opt.label} value={idx}>
+              {opt.label}
+            </MenuItem>
+          ))}
+        </Select>
+      ) : (
+        <Typography variant="body2" color="text.secondary" sx={{ minWidth: 60 }}>
+          {activity.inputUnit}
+        </Typography>
+      )}
     </Stack>
   );
 };

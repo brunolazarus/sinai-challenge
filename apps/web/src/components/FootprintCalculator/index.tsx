@@ -45,7 +45,7 @@ export const FootprintCalculator = () => {
       </Typography>
       <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
         Enter amounts for the activities that apply to you, then calculate your
-        estimated carbon footprint.
+        estimated carbon footprint. All amounts are <strong>annual totals</strong>.
       </Typography>
 
       {error && (

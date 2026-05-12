@@ -50,6 +50,8 @@ docs/
   ai-features.md          # Planned AI feature roadmap
 ```
 
+The frontend is structured around a **Model-View-Presenter** pattern. Raw data-fetching hooks (`useActivities`, `useFactors`, `useCalculate`) form the Model layer. A composed Presenter hook — `useActivitiesByCategory` — owns UI state and derives the exact values each component needs. React components are the View: they receive props or call hooks, render output, and contain no calculation logic. This keeps the data layer swappable and components straightforward to test in isolation.
+
 ## API Endpoints
 
 | Method | Path | Description |

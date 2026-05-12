@@ -88,7 +88,6 @@ export const FACTORS: EmissionFactor[] = [
       "Weighted average of electric (national grid 0.386 kg CO2e/kWh) and diesel rail. " +
       "Electric segments use grid factors; diesel segments use direct combustion factors.",
   },
-
   {
     id: "gasoline_car_daily_epa2023_us",
     activity: "gasoline_car_daily",
@@ -209,7 +208,7 @@ export const FACTORS: EmissionFactor[] = [
     unit: "kgCO2e_per_kg",
     region: "US",
     year: 2023,
-    source: "EPA + peer-reviewed fisheries LCA studies",
+    source: "EPA GHG Emission Factors Hub 2023",
     methodology:
       "Vessel fuel combustion dominates (~80%) for wild-catch. " +
       "Includes refrigerated cold-chain logistics port to retail.",
@@ -238,7 +237,6 @@ export const FACTORS: EmissionFactor[] = [
       "Fertilizer N2O from soil application dominates. On-farm machinery, irrigation, and transport included. " +
       "Conservative upper estimate for a mixed-vegetable basket.",
   },
-
 
   // ── Waste ─────────────────────────────────────────────────────────────────
   {

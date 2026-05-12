@@ -4,6 +4,7 @@ import {
   Card,
   CardContent,
   Divider,
+  Link,
   Stack,
   Tooltip,
   Typography,
@@ -16,6 +17,12 @@ interface ResultsPanelProps {
 
 export const ResultsPanel = ({ summary }: ResultsPanelProps) => {
   const factorsByActivity = useFactors();
+
+  const REFERENCES = [
+    { label: "EPA GHG Emission Factors Hub 2023", url: "https://www.epa.gov/system/files/documents/2023-03/ghg_emission_factors_hub.pdf" },
+    { label: "EPA eGRID2023", url: "https://www.epa.gov/egrid" },
+    { label: "EPA WARM model v16 (2023)", url: "https://www.epa.gov/warm" },
+  ];
 
   return (
     <Stack spacing={2}>
@@ -90,6 +97,25 @@ export const ResultsPanel = ({ summary }: ResultsPanelProps) => {
                 </Box>
               );
             })}
+          </Stack>
+
+          <Divider sx={{ mt: 2, mb: 1.5 }} />
+          <Typography variant="caption" color="text.secondary" sx={{ display: "block", mb: 0.5 }}>
+            Sources
+          </Typography>
+          <Stack spacing={0.5}>
+            {REFERENCES.map(({ label, url }) => (
+              <Link
+                key={label}
+                href={url}
+                target="_blank"
+                rel="noopener noreferrer"
+                variant="caption"
+                color="text.secondary"
+              >
+                {label}
+              </Link>
+            ))}
           </Stack>
         </CardContent>
       </Card>

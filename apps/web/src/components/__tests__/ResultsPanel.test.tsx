@@ -1,8 +1,9 @@
 import { describe, it, expect, afterEach } from "vitest";
 import { render, screen, cleanup } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import type { ReactNode } from "react";
 import type { EmissionFactor, FootprintSummary } from "@sinai/shared";
-import { ResultsPanel } from "../ResultsPanel";
+import { ResultsPanel } from "../ResultsPanel/ResultsPanel";
 
 afterEach(cleanup);
 
@@ -24,7 +25,7 @@ const createWrapper = () => {
     defaultOptions: { queries: { retry: false } },
   });
   queryClient.setQueryData(["factors"], { factors });
-  return ({ children }: { children: React.ReactNode }) => (
+  return ({ children }: { children: ReactNode }) => (
     <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
   );
 };
@@ -74,6 +75,6 @@ describe("ResultsPanel", () => {
 
   it("shows the factor id as a hoverable tag", () => {
     render(<ResultsPanel summary={summary} />, { wrapper: createWrapper() });
-    expect(screen.getByText("gasoline_car_epa2023_us")).toBeInTheDocument();
+    expect(screen.getByText(/gasoline_car_epa2023_us/)).toBeInTheDocument();
   });
 });

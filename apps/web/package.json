@@ -19,7 +19,8 @@
     "@sinai/shared": "workspace:*",
     "@tanstack/react-query": "^5.28.0",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "recharts": "^3.8.1"
   },
   "devDependencies": {
     "@sinai/eslint-config": "workspace:*",

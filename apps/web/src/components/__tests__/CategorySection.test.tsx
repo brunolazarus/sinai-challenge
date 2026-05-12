@@ -67,12 +67,12 @@ describe("CategorySection", () => {
 
   it("shows singular filled count for one non-zero activity", () => {
     renderSection({ gasoline_car: "100" });
-    expect(screen.getByText("(1 activity filled)")).toBeInTheDocument();
+    expect(screen.getByText("1 activity filled")).toBeInTheDocument();
   });
 
   it("shows plural filled count for multiple non-zero activities", () => {
     renderSection({ gasoline_car: "100", electric_car: "50" });
-    expect(screen.getByText("(2 activities filled)")).toBeInTheDocument();
+    expect(screen.getByText("2 activities filled")).toBeInTheDocument();
   });
 
   it("does not count zero or empty quantities as filled", () => {

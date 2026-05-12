@@ -1,5 +1,7 @@
 # Carbon Footprint Calculator
 
+![Carbon Footprint Calculator UI](docs/screenshot.png)
+
 ## TL;DR
 
 Full-stack personal carbon footprint calculator. Enter annual quantities across transportation, energy, diet, and waste — get a CO₂e breakdown with full calculation provenance sourced from EPA data.

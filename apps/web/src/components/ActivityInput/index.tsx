@@ -8,6 +8,8 @@ import {
   Typography,
 } from "@mui/material";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+import { IconCircle } from "../IconCircle";
+import { ACTIVITY_ICONS } from "../../lib/iconMaps";
 import { useActivityInputPresenter } from "./useActivityInputPresenter";
 
 interface ActivityInputProps {
@@ -31,6 +33,8 @@ export const ActivityInput = ({
     switchUnit,
   } = useActivityInputPresenter(activity, quantity, onChange);
 
+  const Icon = ACTIVITY_ICONS[activity.id];
+
   return (
     <Stack
       direction={{ xs: "column", sm: "row" }}
@@ -39,21 +43,29 @@ export const ActivityInput = ({
     >
       <Stack
         direction="row"
-        spacing={0.8}
-        sx={{ alignItems: "flex-start", width: { sm: 200 }, flexShrink: 0 }}
+        spacing={1}
+        sx={{ alignItems: "center", width: { sm: 220 }, flexShrink: 0 }}
       >
-        <Typography variant="body2" sx={{ fontWeight: 500, lineHeight: 1.4 }}>
-          {activity.label}
-        </Typography>
-        {methodology && (
-          <Tooltip title={methodology} arrow placement="top">
-            <InfoOutlinedIcon
-              fontSize="inherit"
-              sx={{ color: "text.disabled", cursor: "help", fontSize: 14 }}
-            />
-          </Tooltip>
+        {Icon && (
+          <IconCircle size={32} bgcolor="primary.main" opacity={0.85}>
+            <Icon sx={{ color: "white", fontSize: 16 }} />
+          </IconCircle>
         )}
+        <Stack direction="row" spacing={0.5} sx={{ alignItems: "flex-start" }}>
+          <Typography variant="body2" sx={{ fontWeight: 500, lineHeight: 1.4 }}>
+            {activity.label}
+          </Typography>
+          {methodology && (
+            <Tooltip title={methodology} arrow placement="top">
+              <InfoOutlinedIcon
+                fontSize="inherit"
+                sx={{ color: "text.disabled", cursor: "help", fontSize: 14, mt: "2px" }}
+              />
+            </Tooltip>
+          )}
+        </Stack>
       </Stack>
+
       <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
         <TextField
           size="small"

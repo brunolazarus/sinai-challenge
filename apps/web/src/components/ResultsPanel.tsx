@@ -32,7 +32,7 @@ export const ResultsPanel = ({ summary }: ResultsPanelProps) => {
       >
         <CardContent>
           <Typography variant="overline" sx={{ opacity: 0.8 }}>
-            Total Carbon Footprint
+            Your Total Carbon Footprint
           </Typography>
           <Stack direction="row" spacing={1} sx={{ alignItems: "baseline" }}>
             <Typography variant="h3" sx={{ fontWeight: 700 }}>
@@ -42,6 +42,9 @@ export const ResultsPanel = ({ summary }: ResultsPanelProps) => {
               kg CO₂e
             </Typography>
           </Stack>
+          <Typography variant="body2" sx={{ opacity: 0.75, mt: 0.5 }}>
+            per year
+          </Typography>
         </CardContent>
       </Card>
 
@@ -59,33 +62,25 @@ export const ResultsPanel = ({ summary }: ResultsPanelProps) => {
               return (
                 <Box
                   key={i}
-                  sx={{ display: "flex", justifyContent: "space-between", alignItems: { xs: "flex-start", sm: "center" }, gap: 1 }}
+                  sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 1 }}
                 >
-                  <Stack spacing={0.25}>
+                  <Stack spacing={0.25} sx={{ minWidth: 0 }}>
                     <Typography
                       variant="body2"
                       sx={{ fontWeight: 500, textTransform: "capitalize" }}
                     >
                       {result.activity.replace(/_/g, " ")}
                     </Typography>
-                    <Stack direction="row" spacing={0.5} sx={{ alignItems: "center" }}>
-                      <Typography variant="caption" color="text.secondary">
-                        {result.input.toFixed(2)} {result.inputUnit} ·
-                      </Typography>
-                      <Tooltip
-                        title={methodology ?? result.factor}
-                        arrow
-                        placement="top"
+                    <Tooltip title={methodology ?? result.factor} arrow placement="top">
+                      <Typography
+                        variant="caption"
+                        color="text.secondary"
+                        noWrap
+                        sx={{ cursor: "help" }}
                       >
-                        <Typography
-                          variant="caption"
-                          color="text.secondary"
-                          sx={{ cursor: "help", textDecoration: "underline dotted" }}
-                        >
-                          {result.factor}
-                        </Typography>
-                      </Tooltip>
-                    </Stack>
+                        {result.input.toFixed(2)} {result.inputUnit} · {result.factor}
+                      </Typography>
+                    </Tooltip>
                   </Stack>
 
                   <Typography

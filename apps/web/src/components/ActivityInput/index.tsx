@@ -1,7 +1,7 @@
 import type { Activity } from "@sinai/shared";
 import { Stack, TextField, Tooltip, Typography } from "@mui/material";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
-import { useFactors } from "../hooks/useFactors";
+import { useActivityInputPresenter } from "./useActivityInputPresenter";
 
 interface ActivityInputProps {
   activity: Activity;
@@ -14,9 +14,7 @@ export const ActivityInput = ({
   quantity,
   onChange,
 }: ActivityInputProps) => {
-  const factorsByActivity = useFactors();
-  const factors = factorsByActivity[activity.id] ?? [];
-  const methodology = factors[0]?.methodology;
+  const { methodology } = useActivityInputPresenter(activity.id);
   return (
     <Stack direction="row" spacing={2} sx={{ alignItems: "flex-start" }}>
       <Stack

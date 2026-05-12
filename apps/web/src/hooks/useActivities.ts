@@ -1,10 +1,5 @@
-import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import type {
-  Activity,
-  CalculationInput,
-  EmissionCategory,
-} from "@sinai/shared";
+import type { Activity, EmissionCategory } from "@sinai/shared";
 import { EMISSION_CATEGORIES } from "@sinai/shared";
 import { api } from "../lib/api";
 
@@ -43,39 +38,3 @@ export const useActivitiesForCategory = (
   return data?.activities.filter((a) => a.category === category) ?? [];
 };
 
-export const useActivitiesByCategory = () => {
-  // state
-  const { data, isLoading } = useActivities();
-  const [selectedCategory, setSelectedCategory] =
-    useState<EmissionCategory | null>(EMISSION_CATEGORIES.TRANSPORTATION);
-
-  const [quantities, setQuantities] = useState<Record<string, string>>({});
-
-  // transformations
-  const activitiesByCategory = data ? groupActivitiesByCategory(data) : null;
-
-  // handlers
-  const toggleCategory = (category: EmissionCategory) => {
-    setSelectedCategory((prev) => (prev === category ? null : category));
-  };
-
-  const handleQuantityChange = (activityId: string, quantity: string) => {
-    setQuantities((prev) => ({ ...prev, [activityId]: quantity }));
-  };
-
-  const validInputs = useMemo<CalculationInput[]>(() => {
-    return Object.entries(quantities)
-      .filter(([, q]) => q !== "" && Number(q) > 0)
-      .map(([activityId, q]) => ({ activityId, quantity: Number(q) }));
-  }, [quantities]);
-
-  return {
-    activitiesByCategory,
-    selectedCategory,
-    toggleCategory,
-    isLoading,
-    handleQuantityChange,
-    validInputs,
-    quantities,
-  };
-};

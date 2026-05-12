@@ -9,15 +9,12 @@ import {
   Typography,
 } from "@mui/material";
 import CalculateIcon from "@mui/icons-material/Calculate";
-import { useActivitiesByCategory } from "../hooks/useActivities";
-import { useCalculate } from "../hooks/useCalculate";
-import { CategorySection } from "./CategorySection";
-import { ErrorBoundary } from "./ErrorBoundary";
-import { ResultsPanel } from "./ResultsPanel";
+import { CategorySection } from "../CategorySection";
+import { ErrorBoundary } from "../ErrorBoundary";
+import { ResultsPanel } from "../ResultsPanel";
+import { useFootprintCalculatorPresenter } from "./useFootprintCalculatorPresenter";
 
-const ORDERED_CATEGORIES = Object.values(
-  EMISSION_CATEGORIES,
-) as EmissionCategory[];
+const ORDERED_CATEGORIES = Object.values(EMISSION_CATEGORIES) as EmissionCategory[];
 
 export const FootprintCalculator = () => {
   const {
@@ -27,18 +24,11 @@ export const FootprintCalculator = () => {
     handleQuantityChange,
     quantities,
     validInputs,
-  } = useActivitiesByCategory();
-
-  const {
-    mutate: calculate,
-    data: calculateSummary,
-    isPending: calculating,
+    handleCalculate,
+    summary,
+    calculating,
     error,
-  } = useCalculate();
-
-  const handleCalculate = () => {
-    if (validInputs.length > 0) calculate(validInputs);
-  };
+  } = useFootprintCalculatorPresenter();
 
   if (isLoading) {
     return (
@@ -95,9 +85,9 @@ export const FootprintCalculator = () => {
         ))}
       </Stack>
 
-      {calculateSummary && (
+      {summary && (
         <ErrorBoundary>
-          <ResultsPanel summary={calculateSummary} />
+          <ResultsPanel summary={summary} />
         </ErrorBoundary>
       )}
     </Container>

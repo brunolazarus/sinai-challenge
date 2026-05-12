@@ -7,8 +7,8 @@ import {
   Typography,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import { useActivitiesForCategory } from "../hooks/useActivities";
-import { ActivityInput } from "./ActivityInput";
+import { ActivityInput } from "../ActivityInput";
+import { useCategorySectionPresenter } from "./useCategorySectionPresenter";
 
 interface CategorySectionProps {
   categoryId: EmissionCategory;
@@ -25,12 +25,7 @@ export const CategorySection = ({
   isExpanded,
   onToggle,
 }: CategorySectionProps) => {
-  const activities = useActivitiesForCategory(categoryId);
-  const filledCount = activities.filter(
-    (a) => quantities[a.id] && Number(quantities[a.id]) > 0,
-  ).length;
-
-  const label = `${categoryId.charAt(0).toUpperCase() + categoryId.slice(1)}`;
+  const { activities, filledCount, label } = useCategorySectionPresenter(categoryId, quantities);
 
   return (
     <Accordion disableGutters expanded={isExpanded} onChange={onToggle}>
@@ -41,8 +36,7 @@ export const CategorySection = ({
           </Typography>
           {filledCount > 0 && (
             <Typography variant="body2" color="text.secondary">
-              ({filledCount} {filledCount === 1 ? "activity" : "activities"}{" "}
-              filled)
+              ({filledCount} {filledCount === 1 ? "activity" : "activities"} filled)
             </Typography>
           )}
         </Stack>
